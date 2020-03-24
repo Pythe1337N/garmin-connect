@@ -4,25 +4,29 @@ const BASE_URL = `${GC_MODERN}/proxy`;
 const SIGNIN_URL = `${GARMIN_SSO}/signin`;
 const LOGIN_URL = `${GARMIN_SSO}/login`;
 
-const CURRENT_USER_SERVICE = `${GC_MODERN}/currentuser-service/user/info`
+const CURRENT_USER_SERVICE = `${GC_MODERN}/currentuser-service/user/info`;
 const USERPROFILE_SERVICE = `${BASE_URL}/userprofile-service`;
 const WELLNESS_SERVICE = `${BASE_URL}/wellness-service`;
 const WORKOUT_SERVICE = `${BASE_URL}/workout-service`;
 
 const USER_SETTINGS = `${USERPROFILE_SERVICE}/userprofile/user-settings/`;
 
-const dailyHeartRate = (userHash) => {
-    return `${WELLNESS_SERVICE}/wellness/dailyHeartRate/${userHash}`;
-}
+const dailyHeartRate = (userHash) => `${WELLNESS_SERVICE}/wellness/dailyHeartRate/${userHash}`;
 
-const userInfo = () => {
-    return CURRENT_USER_SERVICE;
-}
+const schedule = (id) => `${WORKOUT_SERVICE}/schedule/${id}`;
 
-const userSettings = () => {
-    return USER_SETTINGS;
-}
+const userInfo = () => CURRENT_USER_SERVICE;
 
+const userSettings = () => USER_SETTINGS;
+
+const workout = (id) => {
+    if (id) {
+        return `${WORKOUT_SERVICE}/workout/${id}`;
+    }
+    return `${WORKOUT_SERVICE}/workout`;
+};
+
+const workouts = () => `${WORKOUT_SERVICE}/workouts`;
 
 module.exports = {
     GC_MODERN,
@@ -35,6 +39,9 @@ module.exports = {
     WELLNESS_SERVICE,
     WORKOUT_SERVICE,
     dailyHeartRate,
+    schedule,
     userInfo,
-    userSettings
-}
+    userSettings,
+    workout,
+    workouts,
+};

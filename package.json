@@ -1,6 +1,6 @@
 {
   "name": "garmin-connect",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Library connecting to Garmin Connect to both send and receive new data.",
   "main": "./dist/index.js",
   "scripts": {
@@ -26,11 +26,15 @@
     "examples/*"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.3.4",
-    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
-    "@babel/preset-env": "^7.5.5",
-    "babel-preset-minify": "^0.5.1",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.8.2",
     "pre-commit": "^1.2.2"
   },
   "precommit": "build",
@@ -41,6 +45,7 @@
   "runkitExampleFilename": "./examples/example.js",
   "dependencies": {
     "app-root-path": "^3.0.0",
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "qs": "^6.9.2"
   }
 }

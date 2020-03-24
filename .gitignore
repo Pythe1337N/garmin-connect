@@ -25,4 +25,4 @@ dist
 garmin.config.json
 
 # tests
-test/*
+test
