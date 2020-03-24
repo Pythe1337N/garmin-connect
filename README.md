@@ -25,7 +25,19 @@ await GCClient.login('my.email@example.com', 'MySecretPassword');
 const userInfo = await GCClient.getUserInfo();
 ```
 Now you can check `userInfo.emailAddress` to verify that your login was successful.
-### Get activities
+
+## Reading data
+### User info
+Receive basic user information
+```js
+GCClient.getUserInfo();
+```
+### Device info
+Get a list of all registered devices including model numbers and firmware versions.
+```js
+GCClient.getDeviceInfo();
+```
+### Activities
 To get a list of recent activities, use the `getActivities` method. This function takes two arguments, *start* and *limit*, which is used for pagination. Both are optional and will default to whatever Garmin Connect is using. To be sure to get all activities, use this correctly.
 ```js
 // Get a list of default length with most recent activities
@@ -33,7 +45,7 @@ GCClient.getActivities();
 // Get activities 10 through 15. (start 10, limit 5)
 GCClient.getActivities(10, 5);
 ```
-### Get activity details
+### Activity details
 Use the activityId to get details about that specific activity.
 ```js
 const activities = await GCClient.getActivities(0, 1);
@@ -43,12 +55,37 @@ GCClient.getActivity({ activityId: id });
 // Or the whole activity response
 GCClient.getActivity(activities[0]);
 ```
-### Get step count
-Get timestamp and number of steps taken for a specific date
+### Step count
+Get timestamp and number of steps taken for a specific date.
 ```js
 // This will default to today if no date is supplied
 const steps = await GCClient.getSteps(new Date('2020-03-24'));
 ```
+### Heart rate
+Get heart rate for a specific date.
+```js
+// This will default to today if no date is supplied
+const heartRate = await GCClient.getHeartRate(new Date('2020-03-24'));
+```
+### Sleep summary
+Get the summary of how well you've slept for a specific date.
+```js
+// This will default to today if no date is supplied
+const sleep = await GCClient.getSleep(new Date('2020-03-24'));
+```
+### Detailed sleep data
+Get the details of your sleep for a specific date.
+```js
+// This will default to today if no date is supplied
+const detailedSleep = await GCClient.getSleepData(new Date('2020-03-24'));
+```
+## Modifying data
+### Add weight
+To add a new weight measurement, use `setBodyWeight`. Here you specify your weight in *kg*.
+```js
+GCClient.setBodyWeight(81.4);
+```
+Will set your current weight to 81.4kg. The unit used might be tied to your preferred weight settings.
 ### Add workout
 To add a custom workout, use the `addWorkout` or more specifically `addRunningWorkout`.
 ```js

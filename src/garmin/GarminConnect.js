@@ -73,6 +73,36 @@ class GarminConnect {
         return this.get(urls.userInfo());
     }
 
+    // Devices
+    /**
+     * Get a list of all registered devices
+     * @returns {Promise<*>}
+     */
+    async getDeviceInfo() {
+        return this.get(urls.deviceInfo(this.userHash));
+    }
+
+    // Sleep data
+    /**
+     * Get detailed sleep data for a specific date
+     * @param date
+     * @returns {Promise<*>}
+     */
+    async getSleepData(date = new Date()) {
+        const dateString = toDateString(date);
+        return this.get(urls.dailySleepData(this.userHash), { date: dateString });
+    }
+
+    /**
+     * Get sleep data summary for a specific date
+     * @param date
+     * @returns {Promise<*>}
+     */
+    async getSleep(date = new Date()) {
+        const dateString = toDateString(date);
+        return this.get(urls.dailySleep(), { date: dateString });
+    }
+
     // Heart rate
     /**
      * Get heart rate measurements for a specific date

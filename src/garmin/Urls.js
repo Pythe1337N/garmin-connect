@@ -7,6 +7,7 @@ const LOGIN_URL = `${GARMIN_SSO}/login`;
 const ACTIVITY_SERVICE = `${BASE_URL}/activity-service`;
 const ACTIVITYLIST_SERVICE = `${BASE_URL}/activitylist-service`;
 const CURRENT_USER_SERVICE = `${GC_MODERN}/currentuser-service/user/info`;
+const DEVICE_SERVICE = `${BASE_URL}/device-service`;
 const USERPROFILE_SERVICE = `${BASE_URL}/userprofile-service`;
 const WELLNESS_SERVICE = `${BASE_URL}/wellness-service`;
 const WORKOUT_SERVICE = `${BASE_URL}/workout-service`;
@@ -19,9 +20,15 @@ const activities = () => `${ACTIVITYLIST_SERVICE}/activities/search/activities`;
 
 const dailyHeartRate = (userHash) => `${WELLNESS_SERVICE}/wellness/dailyHeartRate/${userHash}`;
 
-const schedule = (id) => `${WORKOUT_SERVICE}/schedule/${id}`;
+const dailySleep = () => `${WELLNESS_SERVICE}/wellness/dailySleep`;
+
+const dailySleepData = (userHash) => `${WELLNESS_SERVICE}/wellness/dailySleepData/${userHash}`;
 
 const dailySummaryChart = (userHash) => `${WELLNESS_SERVICE}/wellness/dailySummaryChart/${userHash}`;
+
+const deviceInfo = (userHash) => `${DEVICE_SERVICE}/deviceservice/device-info/all/${userHash}`;
+
+const schedule = (id) => `${WORKOUT_SERVICE}/schedule/${id}`;
 
 const userInfo = () => CURRENT_USER_SERVICE;
 
@@ -49,8 +56,11 @@ module.exports = {
     activity,
     activities,
     dailyHeartRate,
-    schedule,
+    dailySleep,
+    dailySleepData,
     dailySummaryChart,
+    deviceInfo,
+    schedule,
     userInfo,
     userSettings,
     workout,
