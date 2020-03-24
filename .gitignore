@@ -1,0 +1,26 @@
+# intelliJ files
+.idea
+*.iml
+*.ipr
+*.iws
+out
+
+# eclipse files
+.classpath
+.project
+.settings
+
+# maven files
+target
+catalina.base_IS_UNDEFINED
+
+# Mac OS X shit...
+.DS_Store*
+
+# node
+node_modules
+package-lock.json
+dist
+
+# tests
+test/*

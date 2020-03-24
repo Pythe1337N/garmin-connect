@@ -1,0 +1,41 @@
+{
+  "name": "garmin-connect",
+  "version": "0.1.0",
+  "description": "Library connecting to Garmin Connect to both send and receive new data.",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "babel ./src --out-dir ./dist -s inline --delete-dir-on-start",
+    "prepack": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pythe1337N/swedish-holidays.git"
+  },
+  "keywords": [
+    "garmin",
+    "connect",
+    "scraper",
+    "weight",
+    "running",
+    "workout"
+  ],
+  "author": "Oskar Bernberg (Pythe1337N)",
+  "license": "MIT",
+  "files": [
+    "dist/*",
+    "examples/*"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
+    "pre-commit": "^1.2.2"
+  },
+  "precommit": "build",
+  "homepage": "https://github.com/Pythe1337N/garmin-connect#readme",
+  "bugs": {
+    "url": "https://github.com/Pythe1337N/garmin-connect/issues"
+  },
+  "runkitExampleFilename": "./examples/example.js"
+}
