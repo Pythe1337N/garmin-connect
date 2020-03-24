@@ -25,11 +25,28 @@ await GCClient.login('my.email@example.com', 'MySecretPassword');
 const userInfo = await GCClient.getUserInfo();
 ```
 Now you can check `userInfo.emailAddress` to verify that your login was successful.
-
+### Get activities
+To get a list of recent activities, use the `getActivities` method. This function takes two arguments, *start* and *limit*, which is used for pagination. Both are optional and will default to whatever Garmin Connect is using. To be sure to get all activities, use this correctly.
+```js
+// Get a list of default length with most recent activities
+GCClient.getActivities();
+// Get activities 10 through 15. (start 10, limit 5)
+GCClient.getActivities(10, 5);
+```
+### Get activity details
+Use the activityId to get details about that specific activity.
+```js
+const activities = await GCClient.getActivities(0, 1);
+const id = activities[0].activityId;
+// Use the id as a parameter 
+GCClient.getActivity({ activityId: id });
+// Or the whole activity response
+GCClient.getActivity(activities[0]);
+```
 ### Add workout
 To add a custom workout, use the `addWorkout` or more specifically `addRunningWorkout`.
 ```js
- GCClient.addRunningWorkout('My 5k run', 5000, 'Some description');
+GCClient.addRunningWorkout('My 5k run', 5000, 'Some description');
 ```
 Will add a running workout of 5km called 'My 5k run' and return a JSON object representing the saved workout.
 ### Schedule workout

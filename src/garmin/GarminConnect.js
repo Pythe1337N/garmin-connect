@@ -99,6 +99,32 @@ class GarminConnect {
         return Promise.reject();
     }
 
+    // Activites
+    /**
+     * Get list of activites
+     * @param start
+     * @param limit
+     * @returns {Promise<*>}
+     */
+    async getActivities(start, limit) {
+        return this.get(urls.activities(), { start, limit });
+    }
+
+    /**
+     * Get details about an activity
+     * @param activity
+     * @param maxChartSize
+     * @param maxPolylineSize
+     * @returns {Promise<*>}
+     */
+    async getActivity(activity, maxChartSize, maxPolylineSize) {
+        const { activityId } = activity || {};
+        if (activityId) {
+            return this.get(urls.activity(activityId), { maxChartSize, maxPolylineSize });
+        }
+        return Promise.reject();
+    }
+
     // Workouts
     /**
      * Get list of workouts
