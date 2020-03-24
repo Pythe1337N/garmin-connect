@@ -18,10 +18,10 @@ $ npm install garmin-connect
 ## How to use
 ```js
 const { GarminConnect } = require('garmin-connect');
-// Create a new Carmin Connect Client
+// Create a new Garmin Connect Client
 const GCClient = new GarminConnect();
 // Uses credentials from garmin.config.json or uses supplied params
-await GCClient.login("my.email@example.com", "MySecretPassword");
+await GCClient.login('my.email@example.com', 'MySecretPassword');
 const userInfo = await GCClient.getUserInfo();
 ```
 Now you can check `userInfo.emailAddress` to verify that your login was successful.
