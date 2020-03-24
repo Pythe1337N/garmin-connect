@@ -28,8 +28,9 @@
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.3.4",
-    "@babel/preset-env": "^7.5.5",
     "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
+    "@babel/preset-env": "^7.5.5",
+    "babel-preset-minify": "^0.5.1",
     "pre-commit": "^1.2.2"
   },
   "precommit": "build",
@@ -37,5 +38,8 @@
   "bugs": {
     "url": "https://github.com/Pythe1337N/garmin-connect/issues"
   },
-  "runkitExampleFilename": "./examples/example.js"
+  "runkitExampleFilename": "./examples/example.js",
+  "dependencies": {
+    "axios": "^0.19.2"
+  }
 }

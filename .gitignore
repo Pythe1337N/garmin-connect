@@ -19,8 +19,10 @@ catalina.base_IS_UNDEFINED
 
 # node
 node_modules
-package-lock.json
 dist
+
+# garmin credentials
+garmin.config.json
 
 # tests
 test/*
