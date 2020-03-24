@@ -1,6 +1,7 @@
 const Client = require('../common/Client');
 const { toDateString } = require('../common/DateUtils');
-const config = require('../../garmin.config.json');
+const appRoot = require('app-root-path');
+const config = require(appRoot + '/garmin.config.json');
 const urls = require('./Urls');
 
 const {
