@@ -73,3 +73,7 @@ For now, this library only supports the following:
 * Get user info
 * Get heart rate
 * Set body weight
+* Get list of workouts
+* Add new workouts
+* Add workouts to you calendar
+* Remove previously added workouts
