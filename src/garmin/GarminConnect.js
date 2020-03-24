@@ -1,20 +1,26 @@
 const appRoot = require('app-root-path');
 
-// eslint-disable-next-line import/no-dynamic-require
-const config = require(`${appRoot}/garmin.config.json`);
+let config = {};
+try {
+    // eslint-disable-next-line
+    config = require(`${appRoot}/garmin.config.json`);
+} catch (e) {
+    // Do nothing
+}
+
 const Client = require('../common/Client');
 const { Running } = require('./workouts');
 const { toDateString } = require('../common/DateUtils');
 const urls = require('./Urls');
 
 const {
-    username,
-    password,
+    username: configUsername,
+    password: configPassword,
 } = config;
 
 const credentials = {
-    username,
-    password,
+    username: configUsername,
+    password: configPassword,
     embed: true,
     _eventId: 'submit',
 };
@@ -40,12 +46,17 @@ class GarminConnect {
 
     /**
      * Login to Garmin Connect
-     * @param date
+     * @param username
+     * @param password
      * @returns {Promise<*>}
      */
-    async login() {
+    async login(username, password) {
+        let tempCredentials = { ...credentials };
+        if (username && password) {
+            tempCredentials = { ...credentials, username, password };
+        }
         await this.client.get(urls.SIGNIN_URL, {}, params);
-        await this.client.post(urls.LOGIN_URL, credentials, params);
+        await this.client.post(urls.LOGIN_URL, tempCredentials, params);
         await this.client.get(urls.GC_MODERN);
         const userPreferences = this.getUserInfo();
         const { displayName } = userPreferences;
@@ -56,7 +67,6 @@ class GarminConnect {
     // User info
     /**
      * Get basic user information
-     * @param date
      * @returns {Promise<*>}
      */
     async getUserInfo() {
@@ -133,11 +143,12 @@ class GarminConnect {
 
     /**
      * Add a workout to your workout calendar.
-     * @param workoutId
+     * @param workout
      * @param date
      * @returns {Promise<*>}
      */
-    async scheduleWorkout(workoutId, date) {
+    async scheduleWorkout(workout, date) {
+        const { workoutId } = workout || {};
         if (workoutId && date) {
             const dateString = toDateString(date);
             return this.post(urls.schedule(workoutId), { date: dateString });
@@ -146,11 +157,12 @@ class GarminConnect {
     }
 
     /**
-     * Delete a workout based on a workoutId.
-     * @param workoutId
+     * Delete a workout based on a workout object.
+     * @param workout
      * @returns {Promise<*>}
      */
-    async deleteWorkout(workoutId) {
+    async deleteWorkout(workout) {
+        const { workoutId } = workout || {};
         if (workoutId) {
             const headers = { 'x-http-method-override': 'DELETE' };
             return this.client.postJson(urls.workout(workoutId), undefined, undefined, headers);

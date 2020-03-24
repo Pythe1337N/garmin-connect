@@ -1,7 +1,7 @@
 {
   "name": "garmin-connect",
-  "version": "0.1.2",
-  "description": "Library connecting to Garmin Connect to both send and receive new data.",
+  "version": "0.1.3",
+  "description": "Makes it simple to interface with Garmin Connect to get or set any data point",
   "main": "./dist/index.js",
   "scripts": {
     "build": "babel ./src --out-dir ./dist -s inline --delete-dir-on-start",
@@ -44,6 +44,7 @@
   },
   "runkitExampleFilename": "./examples/example.js",
   "dependencies": {
+    "@babel/runtime": "^7.9.2",
     "app-root-path": "^3.0.0",
     "axios": "^0.19.2",
     "qs": "^6.9.2"
