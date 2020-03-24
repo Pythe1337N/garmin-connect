@@ -58,7 +58,7 @@ class GarminConnect {
         await this.client.get(urls.SIGNIN_URL, {}, params);
         await this.client.post(urls.LOGIN_URL, tempCredentials, params);
         await this.client.get(urls.GC_MODERN);
-        const userPreferences = this.getUserInfo();
+        const userPreferences = await this.getUserInfo();
         const { displayName } = userPreferences;
         this.userHash = displayName;
         return this;
@@ -123,6 +123,17 @@ class GarminConnect {
             return this.get(urls.activity(activityId), { maxChartSize, maxPolylineSize });
         }
         return Promise.reject();
+    }
+
+    // Steps
+    /**
+     * Get step count for a specific date
+     * @param date
+     * @returns {Promise<*>}
+     */
+    async getSteps(date = new Date()) {
+        const dateString = toDateString(date);
+        return this.get(urls.dailySummaryChart(this.userHash), { date: dateString });
     }
 
     // Workouts

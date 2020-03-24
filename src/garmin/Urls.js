@@ -21,6 +21,8 @@ const dailyHeartRate = (userHash) => `${WELLNESS_SERVICE}/wellness/dailyHeartRat
 
 const schedule = (id) => `${WORKOUT_SERVICE}/schedule/${id}`;
 
+const dailySummaryChart = (userHash) => `${WELLNESS_SERVICE}/wellness/dailySummaryChart/${userHash}`;
+
 const userInfo = () => CURRENT_USER_SERVICE;
 
 const userSettings = () => USER_SETTINGS;
@@ -48,6 +50,7 @@ module.exports = {
     activities,
     dailyHeartRate,
     schedule,
+    dailySummaryChart,
     userInfo,
     userSettings,
     workout,

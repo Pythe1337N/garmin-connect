@@ -43,6 +43,12 @@ GCClient.getActivity({ activityId: id });
 // Or the whole activity response
 GCClient.getActivity(activities[0]);
 ```
+### Get step count
+Get timestamp and number of steps taken for a specific date
+```js
+// This will default to today if no date is supplied
+const steps = await GCClient.getSteps(new Date('2020-03-24'));
+```
 ### Add workout
 To add a custom workout, use the `addWorkout` or more specifically `addRunningWorkout`.
 ```js
@@ -94,3 +100,6 @@ For now, this library only supports the following:
 * Add new workouts
 * Add workouts to you calendar
 * Remove previously added workouts
+* Get list of activities
+* Get details about one specific activity
+* Get the step count
