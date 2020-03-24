@@ -48,7 +48,7 @@ const id = workouts[0].workoutId;
 GCClient.deleteWorkout({ workoutId: id });
 ```
 
-### Custom requests
+## Custom requests
 This library will handle custom requests to your active Garmin Connect session. There are a lot of different url's that is used, which means that this library probably wont cover them all. By using the network analyze tool you can find url's that are used by Garmin Connect to fetch data.
 
 Let's assume I found a `GET` requests to the following url:
