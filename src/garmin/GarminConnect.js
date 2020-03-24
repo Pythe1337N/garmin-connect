@@ -62,6 +62,18 @@ class GarminConnect {
         }
         return Promise.reject();
     }
+
+    async get(url, data) {
+        return this.client.get(url, data);
+    }
+
+    async post(url, data) {
+        return this.client.postJson(url, data);
+    }
+
+    async put(url, data) {
+        return this.client.putJson(url, data);
+    }
 }
 
 module.exports = GarminConnect;
