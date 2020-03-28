@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "babel ./src --out-dir ./dist -s inline --delete-dir-on-start",
-    "prepack": "npm run build"
+    "prepack": "npm install -P && npm run build"
   },
   "repository": {
     "type": "git",
@@ -26,8 +26,6 @@
     "examples/*"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
     "@babel/plugin-proposal-export-namespace-from": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
@@ -44,6 +42,8 @@
   },
   "runkitExampleFilename": "./examples/example.js",
   "dependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
     "@babel/runtime": "^7.9.2",
     "app-root-path": "^3.0.0",
     "axios": "^0.19.2",
