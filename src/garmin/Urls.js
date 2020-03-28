@@ -13,6 +13,7 @@ const WELLNESS_SERVICE = `${BASE_URL}/wellness-service`;
 const WORKOUT_SERVICE = `${BASE_URL}/workout-service`;
 
 const USER_SETTINGS = `${USERPROFILE_SERVICE}/userprofile/user-settings/`;
+const DOWNLOAD_SERVICE =`${BASE_URL}/download-service/files`;
 
 const activity = (id) => `${ACTIVITY_SERVICE}/activity/${id}/details`;
 
@@ -33,6 +34,9 @@ const schedule = (id) => `${WORKOUT_SERVICE}/schedule/${id}`;
 const userInfo = () => CURRENT_USER_SERVICE;
 
 const userSettings = () => USER_SETTINGS;
+
+const originalFile = (activityId) => `${DOWNLOAD_SERVICE}/activity/${activityId}`;
+
 
 const workout = (id) => {
     if (id) {
@@ -65,4 +69,5 @@ module.exports = {
     userSettings,
     workout,
     workouts,
+	originalFile: originalFile
 };
