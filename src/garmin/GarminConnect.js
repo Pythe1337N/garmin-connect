@@ -178,6 +178,21 @@ class GarminConnect {
     }
 
     /**
+     * Download original activity data to disk as zip
+     * Resolves to absolute path for the downloaded file
+     * @param activity
+     * @param dir Will default to current working directory
+     * @returns {Promise<*>}
+     */
+    async downloadOriginalActivityData(activity, dir) {
+        const { activityId } = activity || {};
+        if (activityId) {
+            return this.client.downloadBlob(dir, urls.originalFile(activityId));
+        }
+        return Promise.reject();
+    }
+
+    /**
      * Adds a running workout with one step of completeing a set distance.
      * @param name
      * @param meters
@@ -241,11 +256,6 @@ class GarminConnect {
 
     async get(url, data) {
         return this.client.get(url, data);
-    }
-
-    async downloadOriginalActivityData(dir, activityId) {
-        console.log('getting: '+ urls.originalFile(activityId));        
-        return this.client.downloadBlob(dir, urls.originalFile(activityId));
     }
 
     async post(url, data) {

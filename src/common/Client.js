@@ -3,6 +3,8 @@ const qs = require('qs');
 const fs = require('fs');
 const stream = require('stream');
 const util = require('util');
+const path = require('path');
+
 const pipeline = util.promisify(stream.pipeline);
 
 class Client {
@@ -96,13 +98,13 @@ class Client {
             .then((r) => r && r.data);
     }
 
-    downloadBlob(downloadDir, url, data, params) {
+    downloadBlob(downloadDir = '', url, data, params) {
         const queryData = this.queryString.stringify(data);
         const queryDataString = queryData ? `?${queryData}` : '';
         return this.axios({
             method: 'GET',
             params,
-            responseType: "stream",
+            responseType: 'stream',
             url: `${url}${queryDataString}`,
             headers: this.headers,
             maxRedirects: 0,
@@ -121,13 +123,17 @@ class Client {
             })
             .then((r) => this.parseCookies(r))
             .then(async (r) => {
-                if (typeof r === 'string') {
-                    return r;
+                const { headers } = r || {};
+                const { 'content-disposition': contentDisposition } = headers || {};
+                const downloadDirNormalized = path.normalize(downloadDir);
+                if (contentDisposition) {
+                    const defaultName = `garmin_connect_download_${Date.now()}`;
+                    const [, fileName = defaultName] = contentDisposition.match(/filename="(.+)"/);
+                    const filePath = path.resolve(downloadDir, fileName);
+                    await pipeline(r.data, this.fs.createWriteStream(filePath));
+                    return filePath;
                 }
-                const contentDisposition = r.headers['content-disposition'];
-                const fileName = contentDisposition.match(/filename="(.+)"/);                
-                await pipeline(r.data, this.fs.createWriteStream(downloadDir + fileName[1]));
-                return fileName[1];
+                throw new Error(`Could not download file ${url} to ${downloadDirNormalized}`);
             });
     }
 

@@ -55,6 +55,14 @@ GCClient.getActivity({ activityId: id });
 // Or the whole activity response
 GCClient.getActivity(activities[0]);
 ```
+### Download original activity data
+Use the activityId to download the original activity data. Usually this is supplied as a .zip file.
+```js
+const [activity] = await GCClient.getActivities(0, 1);
+// Directory path is optional and defaults to the current working directory.
+// Downloads filename will be supplied by Garmin.
+GCClient.downloadOriginalActivityData(activity, './some/path/that/exists');
+```
 ### Step count
 Get timestamp and number of steps taken for a specific date.
 ```js

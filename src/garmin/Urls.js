@@ -8,12 +8,12 @@ const ACTIVITY_SERVICE = `${BASE_URL}/activity-service`;
 const ACTIVITYLIST_SERVICE = `${BASE_URL}/activitylist-service`;
 const CURRENT_USER_SERVICE = `${GC_MODERN}/currentuser-service/user/info`;
 const DEVICE_SERVICE = `${BASE_URL}/device-service`;
+const DOWNLOAD_SERVICE = `${BASE_URL}/download-service`;
 const USERPROFILE_SERVICE = `${BASE_URL}/userprofile-service`;
 const WELLNESS_SERVICE = `${BASE_URL}/wellness-service`;
 const WORKOUT_SERVICE = `${BASE_URL}/workout-service`;
 
 const USER_SETTINGS = `${USERPROFILE_SERVICE}/userprofile/user-settings/`;
-const DOWNLOAD_SERVICE =`${BASE_URL}/download-service/files`;
 
 const activity = (id) => `${ACTIVITY_SERVICE}/activity/${id}/details`;
 
@@ -35,7 +35,7 @@ const userInfo = () => CURRENT_USER_SERVICE;
 
 const userSettings = () => USER_SETTINGS;
 
-const originalFile = (activityId) => `${DOWNLOAD_SERVICE}/activity/${activityId}`;
+const originalFile = (id) => `${DOWNLOAD_SERVICE}/files/activity/${id}`;
 
 
 const workout = (id) => {
@@ -69,5 +69,5 @@ module.exports = {
     userSettings,
     workout,
     workouts,
-	originalFile: originalFile
+    originalFile,
 };
