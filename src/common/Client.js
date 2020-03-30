@@ -1,10 +1,15 @@
 const axios = require('axios');
 const qs = require('qs');
+const fs = require('fs');
+const stream = require('stream');
+const util = require('util');
+const pipeline = util.promisify(stream.pipeline);
 
 class Client {
     constructor(headers) {
         this.axios = axios;
         this.queryString = qs;
+        this.fs = fs;
         this.headers = headers || {};
         this.cookies = {};
     }
@@ -89,6 +94,41 @@ class Client {
         })
             .then((r) => this.parseCookies(r))
             .then((r) => r && r.data);
+    }
+
+    downloadBlob(downloadDir, url, data, params) {
+        const queryData = this.queryString.stringify(data);
+        const queryDataString = queryData ? `?${queryData}` : '';
+        return this.axios({
+            method: 'GET',
+            params,
+            responseType: "stream",
+            url: `${url}${queryDataString}`,
+            headers: this.headers,
+            maxRedirects: 0,
+        })
+            .catch((r) => {
+                const { response } = r || {};
+                const { status, headers } = response || {};
+                const { location } = headers || {};
+                this.parseCookies(response);
+                if (status === 302 || status === 301) {
+                    if (headers && location) {
+                        return this.downloadBlob(location, data, params);
+                    }
+                }
+                return r;
+            })
+            .then((r) => this.parseCookies(r))
+            .then(async (r) => {
+                if (typeof r === 'string') {
+                    return r;
+                }
+                const contentDisposition = r.headers['content-disposition'];
+                const fileName = contentDisposition.match(/filename="(.+)"/);                
+                await pipeline(r.data, this.fs.createWriteStream(downloadDir + fileName[1]));
+                return fileName[1];
+            });
     }
 
     get(url, data, params) {

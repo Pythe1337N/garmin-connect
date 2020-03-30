@@ -243,6 +243,11 @@ class GarminConnect {
         return this.client.get(url, data);
     }
 
+    async downloadOriginalActivityData(dir, activityId) {
+        console.log('getting: '+ urls.originalFile(activityId));        
+        return this.client.downloadBlob(dir, urls.originalFile(activityId));
+    }
+
     async post(url, data) {
         return this.client.postJson(url, data);
     }
