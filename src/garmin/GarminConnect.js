@@ -78,7 +78,7 @@ class GarminConnect {
      * @returns {Promise<*>}
      */
     async getSocialProfile() {
-        return this.get(urls.socialProfile());
+        return this.get(urls.socialProfile(this.userHash));
     }
 
 

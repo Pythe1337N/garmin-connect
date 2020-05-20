@@ -33,7 +33,7 @@ const schedule = (id) => `${WORKOUT_SERVICE}/schedule/${id}`;
 
 const userInfo = () => CURRENT_USER_SERVICE;
 
-const socialProfile = () => `${USERPROFILE_SERVICE}/socialProfile/${id}`;
+const socialProfile = (userHash) => `${USERPROFILE_SERVICE}/socialProfile/${userHash}`;
 
 const userSettings = () => USER_SETTINGS;
 
