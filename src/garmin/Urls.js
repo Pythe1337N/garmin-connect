@@ -33,6 +33,8 @@ const schedule = (id) => `${WORKOUT_SERVICE}/schedule/${id}`;
 
 const userInfo = () => CURRENT_USER_SERVICE;
 
+const socialProfile = (userHash) => `${USERPROFILE_SERVICE}/socialProfile/${userHash}`;
+
 const userSettings = () => USER_SETTINGS;
 
 const originalFile = (id) => `${DOWNLOAD_SERVICE}/files/activity/${id}`;
@@ -66,6 +68,7 @@ module.exports = {
     deviceInfo,
     schedule,
     userInfo,
+    socialProfile,
     userSettings,
     workout,
     workouts,

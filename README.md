@@ -32,6 +32,11 @@ Receive basic user information
 ```js
 GCClient.getUserInfo();
 ```
+### Social Profile
+Receive social user information
+```js
+GCCLient.getSocialProfile();
+```
 ### Device info
 Get a list of all registered devices including model numbers and firmware versions.
 ```js
@@ -139,6 +144,7 @@ Notice how the client will keep track of the url's, your user information as wel
 ## Limitations
 For now, this library only supports the following:
 * Get user info
+* Get social user info
 * Get heart rate
 * Set body weight
 * Get list of workouts

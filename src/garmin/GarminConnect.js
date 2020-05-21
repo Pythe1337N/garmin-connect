@@ -73,6 +73,15 @@ class GarminConnect {
         return this.get(urls.userInfo());
     }
 
+    /**
+     * Get social user information
+     * @returns {Promise<*>}
+     */
+    async getSocialProfile() {
+        return this.get(urls.socialProfile(this.userHash));
+    }
+
+
     // Devices
     /**
      * Get a list of all registered devices
