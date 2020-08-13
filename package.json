@@ -30,10 +30,10 @@
     "examples/*"
   ],
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-jest": "^23.8.2",
+    "eslint": "^7.6.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^23.20.0",
     "pre-commit": "^1.2.2"
   },
   "precommit": "build",
@@ -45,6 +45,6 @@
   "dependencies": {
     "app-root-path": "^3.0.0",
     "axios": "^0.19.2",
-    "qs": "^6.9.2"
+    "qs": "^6.9.4"
   }
 }
