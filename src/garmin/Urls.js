@@ -39,7 +39,6 @@ const userSettings = () => USER_SETTINGS;
 
 const originalFile = (id) => `${DOWNLOAD_SERVICE}/files/activity/${id}`;
 
-
 const workout = (id) => {
     if (id) {
         return `${WORKOUT_SERVICE}/workout/${id}`;
@@ -48,6 +47,10 @@ const workout = (id) => {
 };
 
 const workouts = () => `${WORKOUT_SERVICE}/workouts`;
+
+const socialConnections = (userHash) => `${USERPROFILE_SERVICE}/socialProfile/connections/${userHash}`;
+
+const newsFeed = () => `${ACTIVITYLIST_SERVICE}/activities/subscriptionFeed`;
 
 module.exports = {
     GC_MODERN,
@@ -73,4 +76,6 @@ module.exports = {
     workout,
     workouts,
     originalFile,
+    socialConnections,
+    newsFeed,
 };
