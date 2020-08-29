@@ -81,6 +81,13 @@ class GarminConnect {
         return this.get(urls.socialProfile(this.userHash));
     }
 
+    /**
+     * Get a list of all social connections
+     * @returns {Promise<*>}
+     */
+    async getSocialConnections() {
+        return this.get(urls.socialConnections(this.userHash));
+    }
 
     // Devices
     /**
@@ -162,6 +169,16 @@ class GarminConnect {
             return this.get(urls.activity(activityId), { maxChartSize, maxPolylineSize });
         }
         return Promise.reject();
+    }
+
+    /**
+     * Get list of activities in your news feed
+     * @param start
+     * @param limit
+     * @returns {Promise<*>}
+     */
+    async getNewsFeed(start, limit) {
+        return this.get(urls.newsFeed(), { start, limit });
     }
 
     // Steps

@@ -35,7 +35,12 @@ GCClient.getUserInfo();
 ### Social Profile
 Receive social user information
 ```js
-GCCLient.getSocialProfile();
+GCClient.getSocialProfile();
+```
+### Social Connections
+Get a list of all social connections
+```js
+GCClient.getSocialConnections();
 ```
 ### Device info
 Get a list of all registered devices including model numbers and firmware versions.
@@ -59,6 +64,14 @@ const id = activities[0].activityId;
 GCClient.getActivity({ activityId: id });
 // Or the whole activity response
 GCClient.getActivity(activities[0]);
+```
+### Activities
+To get a list of activities in your news feed, use the `getNewsFeed` method. This function takes two arguments, *start* and *limit*, which is used for pagination. Both are optional and will default to whatever Garmin Connect is using. To be sure to get all activities, use this correctly.
+```js
+// Get the news feed with a default length with most recent activities
+GCClient.getNewsFeed();
+// Get activities in feed, 10 through 15. (start 10, limit 5)
+GCClient.getNewsFeed(10, 5);
 ```
 ### Download original activity data
 Use the activityId to download the original activity data. Usually this is supplied as a .zip file.
