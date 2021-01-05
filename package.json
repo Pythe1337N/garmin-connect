@@ -44,7 +44,7 @@
   "runkitExampleFilename": "./examples/example.js",
   "dependencies": {
     "app-root-path": "^3.0.0",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "qs": "^6.9.4"
   }
 }
