@@ -83,6 +83,23 @@ class Client {
             .then((r) => r && r.data);
     }
 
+    postBlob(url, formData, params, headers = {}) {
+        console.log(url);
+        return this.axios({
+            method: 'POST',
+            params,
+            url,
+            data: formData,
+            headers: {
+                ...this.headers,
+                ...headers,
+                ...formData.getHeaders(),
+            },
+        })
+            .then((r) => this.parseCookies(r))
+            .then((r) => r && r.data);
+    }
+
     putJson(url, data, params) {
         return this.axios({
             method: 'PUT',
