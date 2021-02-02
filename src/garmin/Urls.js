@@ -12,6 +12,7 @@ const DOWNLOAD_SERVICE = `${BASE_URL}/download-service`;
 const USERPROFILE_SERVICE = `${BASE_URL}/userprofile-service`;
 const WELLNESS_SERVICE = `${BASE_URL}/wellness-service`;
 const WORKOUT_SERVICE = `${BASE_URL}/workout-service`;
+const UPLOAD_SERVICE = `${BASE_URL}/upload-service`;
 
 const USER_SETTINGS = `${USERPROFILE_SERVICE}/userprofile/user-settings/`;
 
@@ -52,6 +53,8 @@ const socialConnections = (userHash) => `${USERPROFILE_SERVICE}/socialProfile/co
 
 const newsFeed = () => `${ACTIVITYLIST_SERVICE}/activities/subscriptionFeed`;
 
+const upload = (format) => `${UPLOAD_SERVICE}/upload/${format}`;
+
 module.exports = {
     GC_MODERN,
     GARMIN_SSO,
@@ -78,4 +81,5 @@ module.exports = {
     originalFile,
     socialConnections,
     newsFeed,
+    upload,
 };

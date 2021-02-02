@@ -81,6 +81,12 @@ const [activity] = await GCClient.getActivities(0, 1);
 // Downloads filename will be supplied by Garmin.
 GCClient.downloadOriginalActivityData(activity, './some/path/that/exists');
 ```
+### Upload activity file
+Uploads an activity file as a new Activity. The file can be a `gpx`, `tcx`, or `fit` file. If the activity already exists, the result will have a status code of 409.
+```js
+const upload = await GCClient.uploadActivity('./some/path/to/file.fit');
+const activityId = upload.detailedImportResult.successes[0].internalId;
+```
 ### Step count
 Get timestamp and number of steps taken for a specific date.
 ```js

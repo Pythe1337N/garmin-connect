@@ -1,4 +1,7 @@
 const appRoot = require('app-root-path');
+const path = require('path');
+const FormData = require('form-data');
+const fs = require('fs');
 
 let config = {};
 try {
@@ -216,6 +219,23 @@ class GarminConnect {
             return this.client.downloadBlob(dir, urls.originalFile(activityId));
         }
         return Promise.reject();
+    }
+
+    /**
+     * Uploads an activity file ('gpx', 'tcx', or 'fit')
+     * @param file the file to upload
+     * @param format the format of the file. If undefined, the extension of the file will be used.
+     * @returns {Promise<*>}
+     */
+    async uploadActivity(file, format) {
+        format = format || path.extname(file);
+        if (format !== '.gpx' && format !== '.tcx' && format !== '.fit') {
+            Promise.reject();
+        }
+
+        var formData = new FormData();
+        formData.append(path.basename(file), fs.createReadStream(file));
+        return this.client.postBlob(urls.upload(format), formData);
     }
 
     /**
