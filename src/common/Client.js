@@ -84,7 +84,6 @@ class Client {
     }
 
     postBlob(url, formData, params, headers = {}) {
-        console.log(url);
         return this.axios({
             method: 'POST',
             params,
