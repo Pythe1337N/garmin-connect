@@ -112,6 +112,20 @@ Get the details of your sleep for a specific date.
 const detailedSleep = await GCClient.getSleepData(new Date('2020-03-24'));
 ```
 ## Modifying data
+### Update activity
+```js
+const activities = await GCClient.getActivities(0, 1);
+const activity = activities[0];
+activity['activityName'] = 'The Updated Name';
+await GCClient.updateActivity(activity);
+```
+### Delete an activity
+Deletes an activty.
+```js
+const activities = await GCClient.getActivities(0, 1);
+const activity = activities[0];
+await GCClient.deleteActivity(activity);
+```
 ### Add weight
 To add a new weight measurement, use `setBodyWeight`. Here you specify your weight in *kg*.
 ```js
