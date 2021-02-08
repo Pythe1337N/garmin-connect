@@ -169,7 +169,30 @@ class GarminConnect {
     async getActivity(activity, maxChartSize, maxPolylineSize) {
         const { activityId } = activity || {};
         if (activityId) {
-            return this.get(urls.activity(activityId), { maxChartSize, maxPolylineSize });
+            return this.get(urls.activityDetails(activityId), { maxChartSize, maxPolylineSize });
+        }
+        return Promise.reject();
+    }
+
+    /**
+     * Updates an activity
+     * @param activity
+     * @returns {Promise<*>}
+     */
+    async updateActivity(activity) {
+        return this.put(urls.activity(activity.activityId), activity);
+    }
+
+    /**
+     * Deletes an activity
+     * @param activity
+     * @returns {Promise<*>}
+     */
+    async deleteActivity(activity) {
+        const { activityId } = activity || {};
+        if (activityId) {
+            const headers = { 'x-http-method-override': 'DELETE' };
+            return this.client.postJson(urls.activity(activityId), undefined, undefined, headers);
         }
         return Promise.reject();
     }

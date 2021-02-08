@@ -16,7 +16,9 @@ const UPLOAD_SERVICE = `${BASE_URL}/upload-service`;
 
 const USER_SETTINGS = `${USERPROFILE_SERVICE}/userprofile/user-settings/`;
 
-const activity = (id) => `${ACTIVITY_SERVICE}/activity/${id}/details`;
+const activity = (id) => `${ACTIVITY_SERVICE}/activity/${id}`;
+
+const activityDetails = (id) => `${activity(id)}/details`;
 
 const activities = () => `${ACTIVITYLIST_SERVICE}/activities/search/activities`;
 
@@ -66,6 +68,7 @@ module.exports = {
     WELLNESS_SERVICE,
     WORKOUT_SERVICE,
     activity,
+    activityDetails,
     activities,
     dailyHeartRate,
     dailySleep,
