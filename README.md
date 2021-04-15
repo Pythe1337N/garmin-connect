@@ -167,7 +167,7 @@ The request can be sent using `GCClient` by running
 const displayName = '22f5f84c-de9d-4ad6-97f2-201097b3b983';
 const url = 'https://connect.garmin.com/modern/proxy/wellness-service/wellness/dailyHeartRate/';
 const dateString = '2020-03-24';
-GCClient.get(displayName + url, { date: dateString });
+GCClient.get(url + displayName, { date: dateString });
 ```
 and will net you the same result as using the provided way
 ```js
