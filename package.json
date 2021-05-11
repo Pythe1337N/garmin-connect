@@ -45,6 +45,7 @@
   "dependencies": {
     "app-root-path": "^3.0.0",
     "axios": "^0.21.1",
+    "form-data": "^4.0.0",
     "qs": "^6.10.1"
   }
 }

@@ -18,6 +18,8 @@ const USER_SETTINGS = `${USERPROFILE_SERVICE}/userprofile/user-settings/`;
 
 const activity = (id) => `${ACTIVITY_SERVICE}/activity/${id}`;
 
+const weather = (id) => `${activity(id)}/weather`;
+
 const activityDetails = (id) => `${activity(id)}/details`;
 
 const activities = () => `${ACTIVITYLIST_SERVICE}/activities/search/activities`;
@@ -68,6 +70,7 @@ module.exports = {
     WELLNESS_SERVICE,
     WORKOUT_SERVICE,
     activity,
+    weather,
     activityDetails,
     activities,
     dailyHeartRate,

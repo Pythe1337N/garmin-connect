@@ -175,6 +175,19 @@ class GarminConnect {
     }
 
     /**
+     * Get weather data from an activity
+     * @param activity
+     * @returns {Promise<*>}
+     */
+    async getActivityWeather(activity) {
+        const { activityId } = activity || {};
+        if (activityId) {
+            return this.get(urls.weather(activityId));
+        }
+        return Promise.reject();
+    }
+
+    /**
      * Updates an activity
      * @param activity
      * @returns {Promise<*>}
@@ -251,12 +264,12 @@ class GarminConnect {
      * @returns {Promise<*>}
      */
     async uploadActivity(file, format) {
-        format = format || path.extname(file);
-        if (format !== '.gpx' && format !== '.tcx' && format !== '.fit') {
+        const detectedFormat = format || path.extname(file);
+        if (detectedFormat !== '.gpx' && detectedFormat !== '.tcx' && detectedFormat !== '.fit') {
             Promise.reject();
         }
 
-        var formData = new FormData();
+        const formData = new FormData();
         formData.append(path.basename(file), fs.createReadStream(file));
         return this.client.postBlob(urls.upload(format), formData);
     }
