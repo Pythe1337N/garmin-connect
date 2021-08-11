@@ -11,7 +11,7 @@ try {
     // Do nothing
 }
 
-const Client = require('../common/Client');
+const CFClient = require('../common/CFClient');
 const { Running } = require('./workouts');
 const { toDateString } = require('../common/DateUtils');
 const urls = require('./Urls');
@@ -24,26 +24,16 @@ const {
 const credentials = {
     username: configUsername,
     password: configPassword,
-    embed: true,
-    _eventId: 'submit',
-};
-
-const params = {
-    service: urls.GC_MODERN,
-    clientId: 'GarminConnect',
-    gauthHost: urls.GARMIN_SSO,
-    consumeServiceTicket: false,
+    embed: 'false',
 };
 
 class GarminConnect {
     constructor() {
         const headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36',
-            Referer: 'https://connect.garmin.com/modern/dashboard/',
-            origin: 'https://sso.garmin.com',
+            origin: urls.GARMIN_SSO_ORIGIN,
             nk: 'NT',
         };
-        this.client = new Client(headers);
+        this.client = new CFClient(headers);
         this.userHash = undefined;
     }
 
@@ -58,9 +48,8 @@ class GarminConnect {
         if (username && password) {
             tempCredentials = { ...credentials, username, password };
         }
-        await this.client.get(urls.SIGNIN_URL, {}, params);
-        await this.client.post(urls.LOGIN_URL, tempCredentials, params);
-        await this.client.get(urls.GC_MODERN);
+        await this.client.get(urls.SIGNIN_URL);
+        await this.client.post(urls.SIGNIN_URL, tempCredentials);
         const userPreferences = await this.getUserInfo();
         const { displayName } = userPreferences;
         this.userHash = displayName;
@@ -250,11 +239,14 @@ class GarminConnect {
      * @returns {Promise<*>}
      */
     async downloadOriginalActivityData(activity, dir) {
+        throw new Error('downloadOriginalActivityData method is disabled in this version');
+        /*
         const { activityId } = activity || {};
         if (activityId) {
             return this.client.downloadBlob(dir, urls.originalFile(activityId));
         }
         return Promise.reject();
+         */
     }
 
     /**
@@ -264,6 +256,8 @@ class GarminConnect {
      * @returns {Promise<*>}
      */
     async uploadActivity(file, format) {
+        throw new Error('uploadActivity method is disabled in this version');
+        /*
         const detectedFormat = format || path.extname(file);
         if (detectedFormat !== '.gpx' && detectedFormat !== '.tcx' && detectedFormat !== '.fit') {
             Promise.reject();
@@ -272,6 +266,7 @@ class GarminConnect {
         const formData = new FormData();
         formData.append(path.basename(file), fs.createReadStream(file));
         return this.client.postBlob(urls.upload(format), formData);
+         */
     }
 
     /**

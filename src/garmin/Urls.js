@@ -1,5 +1,6 @@
 const GC_MODERN = 'https://connect.garmin.com/modern';
-const GARMIN_SSO = 'https://sso.garmin.com/sso';
+const GARMIN_SSO_ORIGIN = 'https://sso.garmin.com';
+const GARMIN_SSO = `${GARMIN_SSO_ORIGIN}/sso`;
 const BASE_URL = `${GC_MODERN}/proxy`;
 const SIGNIN_URL = `${GARMIN_SSO}/signin`;
 const LOGIN_URL = `${GARMIN_SSO}/login`;
@@ -61,6 +62,7 @@ const upload = (format) => `${UPLOAD_SERVICE}/upload/${format}`;
 
 module.exports = {
     GC_MODERN,
+    GARMIN_SSO_ORIGIN,
     GARMIN_SSO,
     BASE_URL,
     SIGNIN_URL,
