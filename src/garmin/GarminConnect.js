@@ -1,7 +1,7 @@
 const appRoot = require('app-root-path');
-const path = require('path');
-const FormData = require('form-data');
-const fs = require('fs');
+// const path = require('path');
+// const FormData = require('form-data');
+// const fs = require('fs');
 
 let config = {};
 try {
@@ -234,19 +234,20 @@ class GarminConnect {
     /**
      * Download original activity data to disk as zip
      * Resolves to absolute path for the downloaded file
-     * @param activity
+     * @param activity : any
      * @param dir Will default to current working directory
+     * @param type : string - Will default to zip
      * @returns {Promise<*>}
      */
-    async downloadOriginalActivityData(activity, dir) {
-        throw new Error('downloadOriginalActivityData method is disabled in this version');
-        /*
+    async downloadOriginalActivityData(activity, dir, type = '') {
         const { activityId } = activity || {};
         if (activityId) {
-            return this.client.downloadBlob(dir, urls.originalFile(activityId));
+            const url = type === '' || type === 'zip'
+                ? urls.originalFile(activityId)
+                : urls.exportFile(activityId, type);
+            return this.client.downloadBlob(dir, url);
         }
         return Promise.reject();
-         */
     }
 
     /**

@@ -1,6 +1,8 @@
 const cloudscraper = require('cloudscraper');
 const qs = require('qs');
 const request = require('request');
+const fs = require('fs');
+const path = require('path');
 
 const asJson = (body) => {
     try {
@@ -26,6 +28,40 @@ class CFClient {
                 options,
                 (err, res) => {
                     resolve(res);
+                },
+            );
+        });
+    }
+
+    /**
+     * @param {string} downloadDir
+     * @param {string} url
+     * @param {*} data
+     */
+    async downloadBlob(downloadDir = '', url, data) {
+        const queryData = this.queryString.stringify(data);
+        const queryDataString = queryData ? `?${queryData}` : '';
+        const options = {
+            method: 'GET',
+            jar: this.cookies,
+            uri: `${url}${queryDataString}`,
+            headers: this.headers,
+            encoding: 0,
+        };
+        return new Promise((resolve) => {
+            this.cloudscraper(
+                options,
+                async (err, response, body) => {
+                    const { headers } = response || {};
+                    const { 'content-disposition': contentDisposition } = headers || {};
+                    const downloadDirNormalized = path.normalize(downloadDir);
+                    if (contentDisposition) {
+                        const defaultName = `garmin_connect_download_${Date.now()}`;
+                        const [, fileName = defaultName] = contentDisposition.match(/filename="(.+)"/);
+                        const filePath = path.resolve(downloadDirNormalized, fileName);
+                        fs.writeFileSync(filePath, body);
+                        resolve(filePath);
+                    }
                 },
             );
         });
