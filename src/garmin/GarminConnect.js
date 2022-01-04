@@ -37,6 +37,22 @@ class GarminConnect {
         this.userHash = undefined;
     }
 
+    get sessionJson() {
+        const cookies = this.client.serializeCookies();
+        return { cookies, userHash: this.userHash };
+    }
+
+    set sessionJson(json) {
+        const {
+            cookies,
+            userHash,
+        } = json || {};
+        if (cookies && userHash) {
+            this.userHash = userHash;
+            this.client.importCookies(cookies);
+        }
+    }
+
     /**
      * Login to Garmin Connect
      * @param username
@@ -44,9 +60,11 @@ class GarminConnect {
      * @returns {Promise<*>}
      */
     async login(username, password) {
-        let tempCredentials = { ...credentials };
+        let tempCredentials = { ...credentials, rememberme: 'on' };
         if (username && password) {
-            tempCredentials = { ...credentials, username, password };
+            tempCredentials = {
+                ...credentials, username, password, rememberme: 'on',
+            };
         }
         await this.client.get(urls.SIGNIN_URL);
         await this.client.post(urls.SIGNIN_URL, tempCredentials);

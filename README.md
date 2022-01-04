@@ -26,6 +26,17 @@ const userInfo = await GCClient.getUserInfo();
 ```
 Now you can check `userInfo.emailAddress` to verify that your login was successful.
 
+## Reusing your session
+After a successful login the ```sessionJson``` getter and setter can be used to export and restore your session.
+```js
+// Exporting the session
+const session = GCClient.sessionJson;
+
+// Use this instead of GCClient.login() to import the session;
+GCClient.sessionJson = session;
+```
+The exported session should be serializable and can be stored as a JSON string.
+
 ## Reading data
 ### User info
 Receive basic user information
