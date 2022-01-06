@@ -35,6 +35,8 @@ class GarminConnect {
         };
         this.client = new CFClient(headers);
         this.userHash = undefined;
+        this.listeners = {};
+        this.events = { sessionChange: 'sessionChange' };
     }
 
     get sessionJson() {
@@ -50,6 +52,72 @@ class GarminConnect {
         if (cookies && userHash) {
             this.userHash = userHash;
             this.client.importCookies(cookies);
+        }
+    }
+
+    /**
+     * Add an event listener callback
+     * @param event
+     * @param callback
+     */
+    on(event, callback) {
+        if (event && callback && typeof event === 'string' && typeof callback === 'function') {
+            if (!this.listeners[event]) {
+                this.listeners[event] = [];
+            }
+            this.listeners[event].push(callback);
+        }
+    }
+
+    /**
+     * Method for triggering any event
+     * @param event
+     * @param data
+     */
+    triggerEvent(event, data) {
+        const callbacks = this.listeners[event] || [];
+        callbacks.forEach((cb) => cb(data));
+    }
+
+    /**
+     * Add a callback to the 'sessionChange' event
+     * @param callback
+     */
+    onSessionChange(callback) {
+        this.on(this.events.sessionChange, callback);
+    }
+
+    /**
+     * Restore an old session from storage and fallback to regular login
+     * @param json
+     * @param username
+     * @param password
+     * @returns {Promise<GarminConnect>}
+     */
+    async restoreOrLogin(json, username, password) {
+        return this.restore(json).catch((e) => {
+            console.warn(e);
+            return this.login(username, password);
+        });
+    }
+
+    /**
+     * Restore an old session from storage
+     * @param json
+     * @returns {Promise<GarminConnect>}
+     */
+    async restore(json) {
+        this.sessionJson = json;
+        try {
+            const info = await this.getUserInfo();
+            const { displayName } = info || {};
+            if (displayName && displayName === this.userHash) {
+                // Session restoration was successful
+                return this;
+            }
+            throw new Error('Unable to restore session, user hash do not match');
+        } catch (e) {
+            throw new Error(`Unable to restore session due to: ${e}`);
         }
     }
 
@@ -350,15 +418,21 @@ class GarminConnect {
     // General methods
 
     async get(url, data) {
-        return this.client.get(url, data);
+        const response = await this.client.get(url, data);
+        this.triggerEvent(this.events.sessionChange, this.sessionJson);
+        return response;
     }
 
     async post(url, data) {
-        return this.client.postJson(url, data);
+        const response = await this.client.postJson(url, data);
+        this.triggerEvent(this.events.sessionChange, this.sessionJson);
+        return response;
     }
 
     async put(url, data) {
-        return this.client.putJson(url, data);
+        const response = await this.client.putJson(url, data);
+        this.triggerEvent(this.events.sessionChange, this.sessionJson);
+        return response;
     }
 }
 

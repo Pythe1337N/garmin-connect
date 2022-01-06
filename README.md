@@ -27,15 +27,46 @@ const userInfo = await GCClient.getUserInfo();
 Now you can check `userInfo.emailAddress` to verify that your login was successful.
 
 ## Reusing your session
+This is an experimental feature and might not yet provide full stability.
+
 After a successful login the ```sessionJson``` getter and setter can be used to export and restore your session.
 ```js
 // Exporting the session
 const session = GCClient.sessionJson;
 
-// Use this instead of GCClient.login() to import the session;
-GCClient.sessionJson = session;
+// Use this instead of GCClient.login() to restore the session
+// This will throw an error if the stored session cannot be reused
+GCClient.restore(session);
 ```
 The exported session should be serializable and can be stored as a JSON string.
+
+A stored session can only be reused once and will need to be stored after each request. This can be done by attaching some storage to the ```sessionChange``` event.
+```js
+GCClient.onSessionChange(session => {
+    /*
+        Your choice of storage here
+        node-persist will probably work in most cases 
+     */
+});
+```
+
+### Login fallback
+To make sure to use a stored session if possible, but fallback to regular login, one can use the ```restoreOrLogin``` method.
+The arguments ```username``` and ```password``` are both optional and the regular ```.login()``` will be 
+called if session restore fails.
+```js
+await GCClient.restoreOrLogin(session, username, password);
+```
+
+## Events
+
+* ```sessionChange``` will trigger on a change in the current ```sessionJson```
+
+To attach a listener to an event, use the ```.on()``` method.
+```js
+GCClient.on('sessionChange', session => console.log(session));
+```
+There's currently no way of removing listeners.
 
 ## Reading data
 ### User info
