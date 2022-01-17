@@ -45,6 +45,14 @@ const userSettings = () => USER_SETTINGS;
 
 const originalFile = (id) => `${DOWNLOAD_SERVICE}/files/activity/${id}`;
 
+/**
+ *
+ * @param id {string}
+ * @param type "tcx" | "gpx"
+ * @return {`${string}/export/${string}/activity/${string}`}
+ */
+const exportFile = (id, type) => `${DOWNLOAD_SERVICE}/export/${type}/activity/${id}`;
+
 const workout = (id) => {
     if (id) {
         return `${WORKOUT_SERVICE}/workout/${id}`;
@@ -87,6 +95,7 @@ module.exports = {
     workout,
     workouts,
     originalFile,
+    exportFile,
     socialConnections,
     newsFeed,
     upload,
