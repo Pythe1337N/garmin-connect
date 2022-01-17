@@ -1,7 +1,4 @@
 const appRoot = require('app-root-path');
-// const path = require('path');
-// const FormData = require('form-data');
-// const fs = require('fs');
 
 let config = {};
 try {
