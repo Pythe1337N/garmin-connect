@@ -20,6 +20,19 @@ class CFClient {
         this.headers = headers || {};
     }
 
+    serializeCookies() {
+        // eslint-disable-next-line no-underscore-dangle
+        return this.cookies._jar.serializeSync();
+    }
+
+    importCookies(cookies) {
+        // eslint-disable-next-line no-underscore-dangle
+        const deserialized = this.cookies._jar.constructor.deserializeSync(cookies);
+        this.cookies = request.jar();
+        // eslint-disable-next-line no-underscore-dangle
+        this.cookies._jar = deserialized;
+    }
+
     async scraper(options) {
         return new Promise((resolve) => {
             this.cloudscraper(

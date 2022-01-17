@@ -44,10 +44,10 @@
   "runkitExampleFilename": "./examples/example.js",
   "dependencies": {
     "app-root-path": "^3.0.0",
-    "axios": "^0.21.1",
+    "axios": "^0.24.0",
     "cloudscraper": "^4.6.0",
     "form-data": "^4.0.0",
-    "qs": "^6.10.1",
+    "qs": "^6.10.2",
     "request": "^2.88.2"
   }
 }
