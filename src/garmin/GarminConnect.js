@@ -319,7 +319,7 @@ class GarminConnect {
      * Resolves to absolute path for the downloaded file
      * @param activity : any
      * @param dir Will default to current working directory
-     * @param type : string - Will default to zip
+     * @param type : string - Will default to 'zip'. Other possible values are 'tcx', 'gpx' or 'kml'.
      * @returns {Promise<*>}
      */
     async downloadOriginalActivityData(activity, dir, type = '') {
