@@ -48,7 +48,7 @@ const originalFile = (id) => `${DOWNLOAD_SERVICE}/files/activity/${id}`;
 /**
  *
  * @param id {string}
- * @param type "tcx" | "gpx"
+ * @param type "tcx" | "gpx" | "kml"
  * @return {`${string}/export/${string}/activity/${string}`}
  */
 const exportFile = (id, type) => `${DOWNLOAD_SERVICE}/export/${type}/activity/${id}`;
