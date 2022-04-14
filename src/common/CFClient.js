@@ -70,7 +70,7 @@ class CFClient {
                     const downloadDirNormalized = path.normalize(downloadDir);
                     if (contentDisposition) {
                         const defaultName = `garmin_connect_download_${Date.now()}`;
-                        const [, fileName = defaultName] = contentDisposition.match(/filename="(.+)"/);
+                        const [, fileName = defaultName] = contentDisposition.match(/filename=(.+)/);
                         const filePath = path.resolve(downloadDirNormalized, fileName);
                         fs.writeFileSync(filePath, body);
                         resolve(filePath);
