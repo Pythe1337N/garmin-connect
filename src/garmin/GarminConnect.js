@@ -1,4 +1,5 @@
 const appRoot = require('app-root-path');
+const fs = require('fs');
 
 let config = {};
 try {
@@ -340,17 +341,17 @@ class GarminConnect {
      * @returns {Promise<*>}
      */
     async uploadActivity(file, format) {
-        throw new Error('uploadActivity method is disabled in this version');
-        /*
-        const detectedFormat = format || path.extname(file);
+        // throw new Error('uploadActivity method is disabled in this version');
+
+        const detectedFormat = format || `.${file.split('.').pop()}`;
         if (detectedFormat !== '.gpx' && detectedFormat !== '.tcx' && detectedFormat !== '.fit') {
             Promise.reject();
         }
 
-        const formData = new FormData();
-        formData.append(path.basename(file), fs.createReadStream(file));
-        return this.client.postBlob(urls.upload(format), formData);
-         */
+        const fileBinary = fs.createReadStream(file);
+        return this.client.post(urls.upload(format), {
+            file: fileBinary,
+        });
     }
 
     /**
