@@ -1,6 +1,7 @@
-const template = require('./templates/RunningTemplate');
+import template, { IRunningWorkout } from './templates/RunningTemplate';
 
-class Running {
+export default class Running {
+    private data: IRunningWorkout;
     constructor() {
         this.data = template();
     }
@@ -14,11 +15,14 @@ class Running {
     }
 
     get distance() {
-        return this.data.workoutSegments[0].workoutSteps[0].endConditionValue;
+        return (
+            this.data.workoutSegments[0].workoutSteps[0].endConditionValue || 0
+        );
     }
 
-    set distance(meters) {
-        this.data.workoutSegments[0].workoutSteps[0].endConditionValue = Math.round(meters);
+    set distance(meters: number) {
+        this.data.workoutSegments[0].workoutSteps[0].endConditionValue =
+            Math.round(meters);
     }
 
     get workoutId() {
@@ -49,5 +53,3 @@ class Running {
         return `${this.name}, ${(this.distance / 1000).toFixed(2)}km`;
     }
 }
-
-module.exports = Running;
