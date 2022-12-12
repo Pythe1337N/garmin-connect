@@ -5,6 +5,7 @@ import * as urls from './Urls';
 import { ExportFileType } from './Urls';
 import { CookieJar } from 'tough-cookie';
 import {
+    GCActivityId,
     GCUserHash,
     IActivity,
     ISocialConnections,
@@ -272,8 +273,8 @@ export default class GarminConnect {
      * @param limit
      * @returns {Promise<*>}
      */
-    async getActivities(start: number, limit: number) {
-        return this.get(urls.activities(), { start, limit });
+    async getActivities(start: number, limit: number): Promise<IActivity[]> {
+        return this.get<IActivity[]>(urls.activities(), { start, limit });
     }
 
     /**
@@ -284,7 +285,7 @@ export default class GarminConnect {
      * @returns {Promise<*>}
      */
     async getActivity(
-        activity: IActivity,
+        activity: { activityId: GCActivityId },
         maxChartSize: number,
         maxPolylineSize: number
     ) {
@@ -303,7 +304,7 @@ export default class GarminConnect {
      * @param activity
      * @returns {Promise<*>}
      */
-    async getActivityWeather(activity: IActivity) {
+    async getActivityWeather(activity: { activityId: GCActivityId }) {
         const { activityId } = activity || {};
         if (activityId) {
             return this.get(urls.weather(activityId));
@@ -316,7 +317,7 @@ export default class GarminConnect {
      * @param activity
      * @returns {Promise<*>}
      */
-    async updateActivity(activity: IActivity) {
+    async updateActivity(activity: { activityId: GCActivityId }) {
         return this.put(urls.activity(activity.activityId), activity);
     }
 
@@ -325,7 +326,7 @@ export default class GarminConnect {
      * @param activity
      * @returns {Promise<*>}
      */
-    async deleteActivity(activity: IActivity) {
+    async deleteActivity(activity: { activityId: GCActivityId }) {
         const { activityId } = activity || {};
         if (activityId) {
             const headers = { 'x-http-method-override': 'DELETE' };
@@ -381,7 +382,7 @@ export default class GarminConnect {
      * @returns {Promise<*>}
      */
     async downloadOriginalActivityData(
-        activity: IActivity,
+        activity: { activityId: GCActivityId },
         dir: string,
         type?: ExportFileType
     ) {

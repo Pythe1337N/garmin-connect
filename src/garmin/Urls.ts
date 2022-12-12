@@ -1,4 +1,4 @@
-import { GCUserHash } from './types';
+import { GCActivityId, GCUserHash, GCWorkoutId } from './types';
 
 export const GC_MODERN = 'https://connect.garmin.com/modern';
 export const GARMIN_SSO_ORIGIN = 'https://sso.garmin.com';
@@ -18,9 +18,6 @@ export const WORKOUT_SERVICE = `${BASE_URL}/workout-service`;
 export const UPLOAD_SERVICE = `${BASE_URL}/upload-service`;
 
 export const USER_SETTINGS = `${USERPROFILE_SERVICE}/userprofile/user-settings/`;
-
-export type GCActivityId = string;
-export type GCWorkoutId = string;
 
 export enum ExportFileType {
     tcx = 'tcx',
