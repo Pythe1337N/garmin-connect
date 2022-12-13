@@ -1,3 +1,1 @@
-import GarminConnect from './garmin/GarminConnect';
-
-export = GarminConnect;
+export { default as GarminConnect } from './garmin/GarminConnect';
