@@ -1,53 +1,85 @@
-const appRoot = require('app-root-path');
+import appRoot from 'app-root-path';
+import CFClient from '../common/CFClient';
+import { toDateString } from '../common/DateUtils';
+import * as urls from './Urls';
+import { ExportFileType, UploadFileType } from './Urls';
+import { CookieJar } from 'tough-cookie';
+import {
+    GCActivityId,
+    GCUserHash,
+    IActivity,
+    ISocialConnections,
+    ISocialProfile,
+    IUserInfo
+} from './types';
+import Running from './workouts/Running';
+import path from 'path';
+import fs from 'fs';
 
-let config = {};
+let config: GCCredentials | undefined = undefined;
+
 try {
-    // eslint-disable-next-line
-    config = require(`${appRoot}/garmin.config.json`);
+    config = appRoot.require('/garmin.config.json');
 } catch (e) {
     // Do nothing
 }
 
-const CFClient = require('../common/CFClient');
-const { Running } = require('./workouts');
-const { toDateString } = require('../common/DateUtils');
-const urls = require('./Urls');
+export type EventCallback<T> = (data: T) => void;
 
-const {
-    username: configUsername,
-    password: configPassword,
-} = config;
+export interface GCCredentials {
+    username: string;
+    password: string;
+}
 
-const credentials = {
-    username: configUsername,
-    password: configPassword,
-    embed: 'false',
-};
+export interface Listeners {
+    [event: string]: EventCallback<any>[];
+}
 
-class GarminConnect {
-    constructor() {
+export enum Event {
+    sessionChange = 'sessionChange'
+}
+
+export interface Session {
+    cookies: CookieJar.Serialized | undefined;
+    userHash: string | undefined;
+}
+
+export default class GarminConnect {
+    private client: CFClient;
+    private _userHash: GCUserHash | undefined;
+    private credentials: GCCredentials;
+    private listeners: Listeners;
+
+    constructor(credentials: GCCredentials | undefined = config) {
         const headers = {
             origin: urls.GARMIN_SSO_ORIGIN,
-            nk: 'NT',
+            nk: 'NT'
         };
         this.client = new CFClient(headers);
-        this.userHash = undefined;
+        this._userHash = undefined;
+        if (!credentials) {
+            throw new Error('Missing credentials');
+        }
+        this.credentials = credentials;
         this.listeners = {};
-        this.events = { sessionChange: 'sessionChange' };
     }
 
-    get sessionJson() {
+    get userHash(): GCUserHash {
+        if (!this._userHash) {
+            throw new Error('User not logged in');
+        }
+        return this._userHash;
+    }
+
+    get sessionJson(): Session {
         const cookies = this.client.serializeCookies();
-        return { cookies, userHash: this.userHash };
+        return { cookies, userHash: this._userHash };
     }
 
-    set sessionJson(json) {
-        const {
-            cookies,
-            userHash,
-        } = json || {};
+    set sessionJson(json: Session) {
+        const { cookies, userHash } = json || {};
         if (cookies && userHash) {
-            this.userHash = userHash;
+            this._userHash = userHash;
             this.client.importCookies(cookies);
         }
     }
@@ -57,8 +89,13 @@ class GarminConnect {
      * @param event
      * @param callback
      */
-    on(event, callback) {
-        if (event && callback && typeof event === 'string' && typeof callback === 'function') {
+    on<T>(event: Event, callback: EventCallback<T>) {
+        if (
+            event &&
+            callback &&
+            typeof event === 'string' &&
+            typeof callback === 'function'
+        ) {
             if (!this.listeners[event]) {
                 this.listeners[event] = [];
             }
@@ -71,7 +108,7 @@ class GarminConnect {
      * @param event
      * @param data
      */
-    triggerEvent(event, data) {
+    triggerEvent<T>(event: Event, data: T) {
         const callbacks = this.listeners[event] || [];
         callbacks.forEach((cb) => cb(data));
     }
@@ -80,8 +117,8 @@ class GarminConnect {
      * Add a callback to the 'sessionChange' event
      * @param callback
      */
-    onSessionChange(callback) {
-        this.on(this.events.sessionChange, callback);
+    onSessionChange(callback: EventCallback<Session>) {
+        this.on<Session>(Event.sessionChange, callback);
     }
 
     /**
@@ -91,7 +128,7 @@ class GarminConnect {
      * @param password
      * @returns {Promise<GarminConnect>}
      */
-    async restoreOrLogin(json, username, password) {
+    async restoreOrLogin(json: Session, username: string, password: string) {
         return this.restore(json).catch((e) => {
             console.warn(e);
             return this.login(username, password);
@@ -103,7 +140,7 @@ class GarminConnect {
      * @param json
      * @returns {Promise<GarminConnect>}
      */
-    async restore(json) {
+    async restore(json: Session) {
         this.sessionJson = json;
         try {
             const info = await this.getUserInfo();
@@ -112,7 +149,9 @@ class GarminConnect {
                 // Session restoration was successful
                 return this;
             }
-            throw new Error('Unable to restore session, user hash do not match');
+            throw new Error(
+                'Unable to restore session, user hash do not match'
+            );
         } catch (e) {
             throw new Error(`Unable to restore session due to: ${e}`);
         }
@@ -124,18 +163,21 @@ class GarminConnect {
      * @param password
      * @returns {Promise<*>}
      */
-    async login(username, password) {
-        let tempCredentials = { ...credentials, rememberme: 'on' };
+    async login(username?: string, password?: string): Promise<GarminConnect> {
         if (username && password) {
-            tempCredentials = {
-                ...credentials, username, password, rememberme: 'on',
-            };
+            this.credentials.username = username;
+            this.credentials.password = password;
         }
+        let tempCredentials = {
+            ...this.credentials,
+            rememberme: 'on',
+            embed: 'false'
+        };
         await this.client.get(urls.SIGNIN_URL);
         await this.client.post(urls.SIGNIN_URL, tempCredentials);
         const userPreferences = await this.getUserInfo();
         const { displayName } = userPreferences;
-        this.userHash = displayName;
+        this._userHash = displayName;
         return this;
     }
 
@@ -144,24 +186,26 @@ class GarminConnect {
      * Get basic user information
      * @returns {Promise<*>}
      */
-    async getUserInfo() {
-        return this.get(urls.userInfo());
+    async getUserInfo(): Promise<IUserInfo> {
+        return this.get<IUserInfo>(urls.userInfo());
     }
 
     /**
      * Get social user information
      * @returns {Promise<*>}
      */
-    async getSocialProfile() {
-        return this.get(urls.socialProfile(this.userHash));
+    async getSocialProfile(): Promise<ISocialProfile> {
+        return this.get<ISocialProfile>(urls.socialProfile(this.userHash));
     }
 
     /**
      * Get a list of all social connections
      * @returns {Promise<*>}
      */
-    async getSocialConnections() {
-        return this.get(urls.socialConnections(this.userHash));
+    async getSocialConnections(): Promise<ISocialConnections> {
+        return this.get<ISocialConnections>(
+            urls.socialConnections(this.userHash)
+        );
     }
 
     // Devices
@@ -181,7 +225,9 @@ class GarminConnect {
      */
     async getSleepData(date = new Date()) {
         const dateString = toDateString(date);
-        return this.get(urls.dailySleepData(this.userHash), { date: dateString });
+        return this.get(urls.dailySleepData(this.userHash), {
+            date: dateString
+        });
     }
 
     /**
@@ -202,7 +248,9 @@ class GarminConnect {
      */
     async getHeartRate(date = new Date()) {
         const dateString = toDateString(date);
-        return this.get(urls.dailyHeartRate(this.userHash), { date: dateString });
+        return this.get(urls.dailyHeartRate(this.userHash), {
+            date: dateString
+        });
     }
 
     // Weight
@@ -211,7 +259,7 @@ class GarminConnect {
      * @param weight
      * @returns {Promise<*>}
      */
-    async setBodyWeight(weight) {
+    async setBodyWeight(weight: number) {
         if (weight) {
             const roundWeight = Math.round(weight * 1000);
             const data = { userData: { weight: roundWeight } };
@@ -227,8 +275,8 @@ class GarminConnect {
      * @param limit
      * @returns {Promise<*>}
      */
-    async getActivities(start, limit) {
-        return this.get(urls.activities(), { start, limit });
+    async getActivities(start: number, limit: number): Promise<IActivity[]> {
+        return this.get<IActivity[]>(urls.activities(), { start, limit });
     }
 
     /**
@@ -238,10 +286,17 @@ class GarminConnect {
      * @param maxPolylineSize
      * @returns {Promise<*>}
      */
-    async getActivity(activity, maxChartSize, maxPolylineSize) {
+    async getActivity(
+        activity: { activityId: GCActivityId },
+        maxChartSize: number,
+        maxPolylineSize: number
+    ) {
         const { activityId } = activity || {};
         if (activityId) {
-            return this.get(urls.activityDetails(activityId), { maxChartSize, maxPolylineSize });
+            return this.get(urls.activityDetails(activityId), {
+                maxChartSize,
+                maxPolylineSize
+            });
         }
         return Promise.reject();
     }
@@ -251,7 +306,7 @@ class GarminConnect {
      * @param activity
      * @returns {Promise<*>}
      */
-    async getActivityWeather(activity) {
+    async getActivityWeather(activity: { activityId: GCActivityId }) {
         const { activityId } = activity || {};
         if (activityId) {
             return this.get(urls.weather(activityId));
@@ -264,7 +319,7 @@ class GarminConnect {
      * @param activity
      * @returns {Promise<*>}
      */
-    async updateActivity(activity) {
+    async updateActivity(activity: { activityId: GCActivityId }) {
         return this.put(urls.activity(activity.activityId), activity);
     }
 
@@ -273,11 +328,15 @@ class GarminConnect {
      * @param activity
      * @returns {Promise<*>}
      */
-    async deleteActivity(activity) {
+    async deleteActivity(activity: { activityId: GCActivityId }) {
         const { activityId } = activity || {};
         if (activityId) {
             const headers = { 'x-http-method-override': 'DELETE' };
-            return this.client.postJson(urls.activity(activityId), undefined, undefined, headers);
+            return this.client.postJson(
+                urls.activity(activityId),
+                undefined,
+                headers
+            );
         }
         return Promise.reject();
     }
@@ -288,7 +347,7 @@ class GarminConnect {
      * @param limit
      * @returns {Promise<*>}
      */
-    async getNewsFeed(start, limit) {
+    async getNewsFeed(start: number, limit: number) {
         return this.get(urls.newsFeed(), { start, limit });
     }
 
@@ -300,7 +359,9 @@ class GarminConnect {
      */
     async getSteps(date = new Date()) {
         const dateString = toDateString(date);
-        return this.get(urls.dailySummaryChart(this.userHash), { date: dateString });
+        return this.get(urls.dailySummaryChart(this.userHash), {
+            date: dateString
+        });
     }
 
     // Workouts
@@ -310,7 +371,7 @@ class GarminConnect {
      * @param limit
      * @returns {Promise<*>}
      */
-    async getWorkouts(start, limit) {
+    async getWorkouts(start: number, limit: number) {
         return this.get(urls.workouts(), { start, limit });
     }
 
@@ -322,12 +383,17 @@ class GarminConnect {
      * @param type : string - Will default to 'zip'. Other possible values are 'tcx', 'gpx' or 'kml'.
      * @returns {Promise<*>}
      */
-    async downloadOriginalActivityData(activity, dir, type = '') {
+    async downloadOriginalActivityData(
+        activity: { activityId: GCActivityId },
+        dir: string,
+        type?: ExportFileType
+    ) {
         const { activityId } = activity || {};
         if (activityId) {
-            const url = type === '' || type === 'zip'
-                ? urls.originalFile(activityId)
-                : urls.exportFile(activityId, type);
+            const url =
+                !type || type === ExportFileType.zip
+                    ? urls.originalFile(activityId)
+                    : urls.exportFile(activityId, type);
             return this.client.downloadBlob(dir, url);
         }
         return Promise.reject();
@@ -339,18 +405,19 @@ class GarminConnect {
      * @param format the format of the file. If undefined, the extension of the file will be used.
      * @returns {Promise<*>}
      */
-    async uploadActivity(file, format) {
-        throw new Error('uploadActivity method is disabled in this version');
-        /*
-        const detectedFormat = format || path.extname(file);
-        if (detectedFormat !== '.gpx' && detectedFormat !== '.tcx' && detectedFormat !== '.fit') {
-            Promise.reject();
+    async uploadActivity(file: string, format: UploadFileType) {
+        const detectedFormat = (format || path.extname(file))?.toLowerCase();
+
+        if ((<any>Object).values(UploadFileType).includes(detectedFormat)) {
+            return Promise.reject();
         }
 
-        const formData = new FormData();
-        formData.append(path.basename(file), fs.createReadStream(file));
-        return this.client.postBlob(urls.upload(format), formData);
-         */
+        const fileBinary = fs.createReadStream(file);
+        const response = this.client.post(urls.upload(format), {
+            file: fileBinary
+        });
+        fileBinary.close();
+        return response;
     }
 
     /**
@@ -360,7 +427,7 @@ class GarminConnect {
      * @param description
      * @returns {Promise<*>}
      */
-    async addRunningWorkout(name, meters, description) {
+    async addRunningWorkout(name: string, meters: number, description: string) {
         const running = new Running();
         running.name = name;
         running.distance = meters;
@@ -373,7 +440,7 @@ class GarminConnect {
      * @param workout
      * @returns {Promise<*>}
      */
-    async addWorkout(workout) {
+    async addWorkout(workout: any) {
         if (workout.isValid()) {
             const data = { ...workout.toJson() };
             if (!data.description) {
@@ -390,7 +457,7 @@ class GarminConnect {
      * @param date
      * @returns {Promise<*>}
      */
-    async scheduleWorkout(workout, date) {
+    async scheduleWorkout(workout: any, date: Date) {
         const { workoutId } = workout || {};
         if (workoutId && date) {
             const dateString = toDateString(date);
@@ -404,34 +471,36 @@ class GarminConnect {
      * @param workout
      * @returns {Promise<*>}
      */
-    async deleteWorkout(workout) {
+    async deleteWorkout(workout: any) {
         const { workoutId } = workout || {};
         if (workoutId) {
             const headers = { 'x-http-method-override': 'DELETE' };
-            return this.client.postJson(urls.workout(workoutId), undefined, undefined, headers);
+            return this.client.postJson(
+                urls.workout(workoutId),
+                undefined,
+                headers
+            );
         }
         return Promise.reject();
     }
 
     // General methods
 
-    async get(url, data) {
+    async get<T>(url: string, data?: any) {
         const response = await this.client.get(url, data);
-        this.triggerEvent(this.events.sessionChange, this.sessionJson);
-        return response;
+        this.triggerEvent(Event.sessionChange, this.sessionJson);
+        return response as T;
     }
 
-    async post(url, data) {
-        const response = await this.client.postJson(url, data);
-        this.triggerEvent(this.events.sessionChange, this.sessionJson);
-        return response;
+    async post<T>(url: string, data: any) {
+        const response = await this.client.postJson<T>(url, data, {});
+        this.triggerEvent(Event.sessionChange, this.sessionJson);
+        return response as T;
     }
 
-    async put(url, data) {
-        const response = await this.client.putJson(url, data);
-        this.triggerEvent(this.events.sessionChange, this.sessionJson);
-        return response;
+    async put<T>(url: string, data: any) {
+        const response = await this.client.putJson<T>(url, data);
+        this.triggerEvent(Event.sessionChange, this.sessionJson);
+        return response as T;
     }
 }
-
-module.exports = GarminConnect;
