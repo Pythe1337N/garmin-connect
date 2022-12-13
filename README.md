@@ -165,10 +165,13 @@ GCClient.downloadOriginalActivityData(activity, './some/path/that/exists');
 ### Upload activity file
 
 Uploads an activity file as a new Activity. The file can be a `gpx`, `tcx`, or `fit` file. If the activity already exists, the result will have a status code of 409.
+Upload fixed in 1.4.4, Garmin changed the upload api, the response `detailedImportResult` doesn't contain the new activityId.
 
 ```js
 const upload = await GCClient.uploadActivity('./some/path/to/file.fit');
+// not working
 const activityId = upload.detailedImportResult.successes[0].internalId;
+const uploadId = upload.detailedImportResult.uploadId;
 ```
 
 ### Step count
@@ -300,6 +303,8 @@ GCClient.getHeartRate();
 Notice how the client will keep track of the url's, your user information as well as keeping the session alive.
 
 ## Limitations
+
+Many responses from Garmin Connect are missing type definitions and defaults to `unknown`. Feel free to add types by opening a pull request.
 
 For now, this library only supports the following:
 

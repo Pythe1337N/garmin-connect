@@ -2,7 +2,7 @@ import appRoot from 'app-root-path';
 import CFClient from '../common/CFClient';
 import { toDateString } from '../common/DateUtils';
 import * as urls from './Urls';
-import { ExportFileType } from './Urls';
+import { ExportFileType, UploadFileType } from './Urls';
 import { CookieJar } from 'tough-cookie';
 import {
     GCActivityId,
@@ -13,6 +13,8 @@ import {
     IUserInfo
 } from './types';
 import Running from './workouts/Running';
+import path from 'path';
+import fs from 'fs';
 
 let config: GCCredentials | undefined = undefined;
 
@@ -403,18 +405,19 @@ export default class GarminConnect {
      * @param format the format of the file. If undefined, the extension of the file will be used.
      * @returns {Promise<*>}
      */
-    async uploadActivity(file: any, format: any) {
-        throw new Error('uploadActivity method is disabled in this version');
-        /*
-        const detectedFormat = format || path.extname(file);
-        if (detectedFormat !== '.gpx' && detectedFormat !== '.tcx' && detectedFormat !== '.fit') {
-            Promise.reject();
+    async uploadActivity(file: string, format: UploadFileType) {
+        const detectedFormat = (format || path.extname(file))?.toLowerCase();
+
+        if ((<any>Object).values(UploadFileType).includes(detectedFormat)) {
+            return Promise.reject();
         }
 
-        const formData = new FormData();
-        formData.append(path.basename(file), fs.createReadStream(file));
-        return this.client.postBlob(urls.upload(format), formData);
-         */
+        const fileBinary = fs.createReadStream(file);
+        const response = this.client.post(urls.upload(format), {
+            file: fileBinary
+        });
+        fileBinary.close();
+        return response;
     }
 
     /**
