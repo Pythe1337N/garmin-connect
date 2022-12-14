@@ -34,7 +34,7 @@
     ],
     "devDependencies": {
         "@types/app-root-path": "^1.2.4",
-        "@types/node": "^18.11.13",
+        "@types/node": "^18.11.15",
         "@types/qs": "^6.9.7",
         "@types/request-promise": "^4.1.48",
         "pre-commit": "^1.2.2",
@@ -49,10 +49,8 @@
     "runkitExampleFilename": "./examples/example.js",
     "dependencies": {
         "app-root-path": "^3.1.0",
-        "axios": "^0.26.1",
         "cloudscraper": "^4.6.0",
-        "form-data": "^4.0.0",
-        "qs": "^6.10.3",
+        "qs": "^6.11.0",
         "request": "^2.88.2"
     },
     "pre-commit": "pretty"
