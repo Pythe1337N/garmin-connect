@@ -407,16 +407,21 @@ export default class GarminConnect {
      */
     async uploadActivity(file: string, format: UploadFileType) {
         const detectedFormat = (format || path.extname(file))?.toLowerCase();
+        const filename = path.basename(file);
 
         if ((<any>Object).values(UploadFileType).includes(detectedFormat)) {
             return Promise.reject();
         }
 
-        const fileBinary = fs.createReadStream(file);
+        const fileBuffer = fs.readFileSync(file);
         const response = this.client.post(urls.upload(format), {
-            file: fileBinary
+            userfile: {
+                value: fileBuffer,
+                options: {
+                    filename
+                }
+            }
         });
-        fileBinary.close();
         return response;
     }
 
