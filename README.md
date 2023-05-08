@@ -319,3 +319,7 @@ For now, this library only supports the following:
 -   Get list of activities
 -   Get details about one specific activity
 -   Get the step count
+-   Get earned badges
+-   Get available badges
+-   Get details about one specific badge
+

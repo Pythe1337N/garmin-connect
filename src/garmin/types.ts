@@ -2,6 +2,7 @@ export type GCUserProfileId = number;
 export type GCUserHash = string;
 export type GCActivityId = number;
 export type GCWorkoutId = string;
+export type GCBadgeId = number;
 
 export interface IUserInfo {
     userProfileId: GCUserProfileId;
@@ -324,4 +325,63 @@ export interface IActivity {
     decoDive: unknown;
     pr: boolean;
     parent: boolean;
+}
+
+export interface IBadgeSocialConnection {
+    userProfileId: GCUserProfileId;
+    fullName: string;
+    displayName: GCUserHash;
+    profileImageUrlMedium: string;
+    profileImageUrlSmall: string;
+    userLevel: number;
+    badgeEarnedDate: string;
+}
+
+export interface IBadgeRelated {
+    badgeId: GCBadgeId;
+    badgeKey: string;
+    badgeName: string;
+    badgeUuid: unknown;
+    badgeCategoryId: number;
+    badgeDifficultyId: number;
+    badgePoints: number;
+    badgeTypeIds: number[];
+    earnedByMe: boolean;
+}
+
+export interface IBadge {
+    badgeId: GCBadgeId;
+    badgeKey: string;
+    badgeName: string;
+    badgeUuid: unknown;
+    badgeCategoryId: number;
+    badgeDifficultyId: number;
+    badgePoints: number;
+    badgeTypeIds: number[];
+    badgeSeriesId: unknown;
+    badgeStartDate: string;
+    badgeEndDate: unknown;
+    userProfileId: number;
+    fullName: string;
+    displayName: string;
+    badgeEarnedDate: string;
+    badgeEarnedNumber: number;
+    badgeLimitCount: unknown;
+    badgeIsViewed: boolean;
+    badgeProgressValue: number;
+    badgeTargetValue: unknown;
+    badgeUnitId: unknown;
+    badgeAssocTypeId: number;
+    badgeAssocDataId: unknown;
+    badgeAssocDataName: unknown;
+    earnedByMe: boolean;
+    currentPlayerType: unknown;
+    userJoined: unknown;
+    badgeChallengeStatusId: unknown;
+    badgePromotionCodeType: unknown;
+    promotionCodeStatus: unknown;
+    createDate: string;
+    relatedBadges: IBadgeRelated[] | null;
+    connectionNumber: number;
+    connections: IBadgeSocialConnection[] | null;
 }
