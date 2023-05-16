@@ -523,6 +523,23 @@ export default class GarminConnect {
         return Promise.reject();
     }
 
+    /**
+     * Uploads an image to an activity
+     * @param activity
+     * @param file the file to upload
+     * @returns {Promise<*>}
+     */
+    async uploadImage(activity: { activityId: GCActivityId }, file: string) {
+        return this.client.post(urls.image(activity.activityId), {
+            file: {
+                value: fs.readFileSync(file),
+                options: {
+                    filename: path.basename(file)
+                }
+            }
+        });
+    }
+
     // General methods
 
     async get<T>(url: string, data?: any) {

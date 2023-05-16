@@ -36,6 +36,9 @@ export enum UploadFileType {
 export const activity = (id: GCActivityId) =>
     `${ACTIVITY_SERVICE}/activity/${id}`;
 
+export const image = (id: GCActivityId) =>
+    `${ACTIVITY_SERVICE}/activity/${id}/image`;
+
 export const weather = (id: GCActivityId) => `${activity(id)}/weather`;
 
 export const activityDetails = (id: GCActivityId) => `${activity(id)}/details`;

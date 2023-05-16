@@ -174,6 +174,19 @@ const activityId = upload.detailedImportResult.successes[0].internalId;
 const uploadId = upload.detailedImportResult.uploadId;
 ```
 
+### Upload activity image
+
+Uploads an image to activity
+
+```js
+const [latestActivty] = await GCClient.getActivities(0, 1);
+
+const upload = await GCClient.uploadImage(
+    latestActivty,
+    './some/path/to/file.jpg'
+);
+```
+
 ### Step count
 
 Get timestamp and number of steps taken for a specific date.
