@@ -9,6 +9,7 @@ import {
     GCBadgeId,
     GCUserHash,
     IActivity,
+    IActivityDetails,
     IBadge,
     ISocialConnections,
     ISocialProfile,
@@ -283,6 +284,20 @@ export default class GarminConnect {
 
     /**
      * Get details about an activity
+     * @param activityId
+     * @returns {Promise<IActivityDetails>}
+     */
+    async getActivityDetails(
+        activityId: GCActivityId
+    ): Promise<IActivityDetails[]> {
+        if (activityId) {
+            return this.get(urls.activity(activityId));
+        }
+        return Promise.reject();
+    }
+
+    /**
+     * Get metrics details about an activity
      * @param activity
      * @param maxChartSize
      * @param maxPolylineSize

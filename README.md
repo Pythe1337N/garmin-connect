@@ -129,7 +129,18 @@ GCClient.getActivities(10, 5);
 
 ### Activity details
 
-Use the activityId to get details about that specific activity.
+Use the activityId to get activity details.
+
+```js
+// search for the activity (optional)
+const [activity] = await GCClient.getActivities(0, 1);
+// get the activity details
+const activityDetails = await GCClient.getActivityDetails(activity.activityId);
+```
+
+### Activity metrics details
+
+Use the activityId to get metrics details about that specific activity.
 
 ```js
 const activities = await GCClient.getActivities(0, 1);
