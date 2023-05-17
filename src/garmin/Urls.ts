@@ -39,6 +39,9 @@ export const activity = (id: GCActivityId) =>
 export const image = (id: GCActivityId) =>
     `${ACTIVITY_SERVICE}/activity/${id}/image`;
 
+export const imageDelete = (id: GCActivityId, imageId: string) =>
+    `${ACTIVITY_SERVICE}/activity/${id}/image/${imageId}`;
+
 export const weather = (id: GCActivityId) => `${activity(id)}/weather`;
 
 export const activityDetails = (id: GCActivityId) => `${activity(id)}/details`;

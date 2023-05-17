@@ -2,7 +2,7 @@ import appRoot from 'app-root-path';
 import CFClient from '../common/CFClient';
 import { toDateString } from '../common/DateUtils';
 import * as urls from './Urls';
-import { ExportFileType, UploadFileType } from './Urls';
+import { ExportFileType, imageDelete, UploadFileType } from './Urls';
 import { CookieJar } from 'tough-cookie';
 import {
     GCActivityId,
@@ -289,7 +289,7 @@ export default class GarminConnect {
      */
     async getActivityDetails(
         activityId: GCActivityId
-    ): Promise<IActivityDetails[]> {
+    ): Promise<IActivityDetails> {
         if (activityId) {
             return this.get(urls.activity(activityId));
         }
@@ -553,6 +553,21 @@ export default class GarminConnect {
                 }
             }
         });
+    }
+
+    /**
+     * Delete an image from an activity
+     * @param activity
+     * @param imageId, can be found in `activityImages` array of the activity
+     * @returns {Promise<void>}
+     */
+    async deleteImage(
+        activity: { activityId: GCActivityId },
+        imageId: string
+    ): Promise<void> {
+        return this.client.delete(
+            urls.imageDelete(activity.activityId, imageId)
+        );
     }
 
     // General methods

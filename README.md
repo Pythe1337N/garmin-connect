@@ -198,6 +198,20 @@ const upload = await GCClient.uploadImage(
 );
 ```
 
+### Delete activity image
+
+Delete an image from activity
+
+```js
+const [activity] = await GCClient.getActivities(0, 1);
+const activityDetails = await GCClient.getActivityDetails(activity.activityId);
+
+await GCClient.deleteImage(
+    activity,
+    activityDetails.metadataDTO.activityImages[0].imageId
+);
+```
+
 ### Step count
 
 Get timestamp and number of steps taken for a specific date.
