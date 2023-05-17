@@ -6,6 +6,7 @@
     "types": "./dist/index.d.ts",
     "scripts": {
         "build": "tsc --build --clean && find ./dist -type d -empty -delete; tsc",
+        "build:watch": "npm run build -- --watch",
         "prettier:all": "prettier --write .",
         "pretty": "pretty-quick --staged",
         "prepack": "npm run build"
