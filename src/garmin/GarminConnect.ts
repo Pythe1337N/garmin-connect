@@ -6,8 +6,10 @@ import { ExportFileType, UploadFileType } from './Urls';
 import { CookieJar } from 'tough-cookie';
 import {
     GCActivityId,
+    GCBadgeId,
     GCUserHash,
     IActivity,
+    IBadge,
     ISocialConnections,
     ISocialProfile,
     IUserInfo
@@ -485,6 +487,38 @@ export default class GarminConnect {
                 undefined,
                 headers
             );
+        }
+        return Promise.reject();
+    }
+
+    // Badges
+    /**
+     * Get list of earned badges
+     * @returns {Promise<*>}
+     */
+    async getBadgesEarned(): Promise<IBadge[]> {
+        return this.get<IBadge[]>(urls.badgesEarned());
+    }
+
+    /**
+     * Get list of available badges
+     * @returns {Promise<*>}
+     */
+    async getBadgesAvailable(): Promise<IBadge[]> {
+        return this.get<IBadge[]>(urls.badgesAvailable());
+    }
+
+    /**
+     * Get details about an badge
+     * @param badge
+     * @returns {Promise<*>}
+     */
+    async getBadge(
+        badge: { badgeId: GCBadgeId },
+    ) {
+        const { badgeId } = badge || {};
+        if (badgeId) {
+            return this.get(urls.badgeDetail(badgeId));
         }
         return Promise.reject();
     }

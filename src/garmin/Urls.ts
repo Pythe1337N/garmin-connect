@@ -1,4 +1,4 @@
-import { GCActivityId, GCUserHash, GCWorkoutId } from './types';
+import { GCActivityId, GCBadgeId, GCUserHash, GCWorkoutId } from './types';
 
 export const GC_MODERN = 'https://connect.garmin.com/modern';
 export const GARMIN_SSO_ORIGIN = 'https://sso.garmin.com';
@@ -9,6 +9,7 @@ export const LOGIN_URL = `${GARMIN_SSO}/login`;
 
 export const ACTIVITY_SERVICE = `${BASE_URL}/activity-service`;
 export const ACTIVITYLIST_SERVICE = `${BASE_URL}/activitylist-service`;
+export const BADGE_SERVICE = `${BASE_URL}/badge-service`;
 export const CURRENT_USER_SERVICE = `${GC_MODERN}/currentuser-service/user/info`;
 export const DEVICE_SERVICE = `${BASE_URL}/device-service`;
 export const DOWNLOAD_SERVICE = `${BASE_URL}/download-service`;
@@ -41,6 +42,15 @@ export const activityDetails = (id: GCActivityId) => `${activity(id)}/details`;
 
 export const activities = () =>
     `${ACTIVITYLIST_SERVICE}/activities/search/activities`;
+
+export const badgesAvailable = () =>
+    `${BADGE_SERVICE}/badge/available`;
+
+export const badgeDetail = (id: GCBadgeId) =>
+    `${BADGE_SERVICE}/badge/detail/v2/${id}`;
+
+export const badgesEarned = () =>
+    `${BADGE_SERVICE}/badge/earned`;
 
 export const dailyHeartRate = (userHash: GCUserHash) =>
     `${WELLNESS_SERVICE}/wellness/dailyHeartRate/${userHash}`;
