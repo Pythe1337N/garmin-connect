@@ -2,12 +2,13 @@ import appRoot from 'app-root-path';
 import CFClient from '../common/CFClient';
 import { toDateString } from '../common/DateUtils';
 import * as urls from './Urls';
-import { ExportFileType, imageDelete, UploadFileType } from './Urls';
+import { ExportFileType, UploadFileType } from './Urls';
 import { CookieJar } from 'tough-cookie';
 import {
     GCActivityId,
     GCBadgeId,
     GCUserHash,
+    Gear,
     IActivity,
     IActivityDetails,
     IBadge,
@@ -528,9 +529,7 @@ export default class GarminConnect {
      * @param badge
      * @returns {Promise<*>}
      */
-    async getBadge(
-        badge: { badgeId: GCBadgeId },
-    ) {
+    async getBadge(badge: { badgeId: GCBadgeId }) {
         const { badgeId } = badge || {};
         if (badgeId) {
             return this.get(urls.badgeDetail(badgeId));
@@ -568,6 +567,19 @@ export default class GarminConnect {
         return this.client.delete(
             urls.imageDelete(activity.activityId, imageId)
         );
+    }
+
+    /**
+     * List the gear available at a certain date
+     * @param userProfilePk, user profile private key (can be found in user or activity details)
+     * @param availableGearDate, list gear available at this date only
+     * @returns {Promise<void>}
+     */
+    async listGear(
+        userProfilePk: number,
+        availableGearDate?: Date
+    ): Promise<Gear[]> {
+        return this.client.get(urls.listGear(userProfilePk, availableGearDate));
     }
 
     // General methods

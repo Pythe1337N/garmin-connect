@@ -17,6 +17,7 @@ export const USERPROFILE_SERVICE = `${BASE_URL}/userprofile-service`;
 export const WELLNESS_SERVICE = `${BASE_URL}/wellness-service`;
 export const WORKOUT_SERVICE = `${BASE_URL}/workout-service`;
 export const UPLOAD_SERVICE = `${BASE_URL}/upload-service`;
+export const GEAR_SERVICE = `${BASE_URL}/gear-service`;
 
 export const USER_SETTINGS = `${USERPROFILE_SERVICE}/userprofile/user-settings/`;
 
@@ -49,14 +50,12 @@ export const activityDetails = (id: GCActivityId) => `${activity(id)}/details`;
 export const activities = () =>
     `${ACTIVITYLIST_SERVICE}/activities/search/activities`;
 
-export const badgesAvailable = () =>
-    `${BADGE_SERVICE}/badge/available`;
+export const badgesAvailable = () => `${BADGE_SERVICE}/badge/available`;
 
 export const badgeDetail = (id: GCBadgeId) =>
     `${BADGE_SERVICE}/badge/detail/v2/${id}`;
 
-export const badgesEarned = () =>
-    `${BADGE_SERVICE}/badge/earned`;
+export const badgesEarned = () => `${BADGE_SERVICE}/badge/earned`;
 
 export const dailyHeartRate = (userHash: GCUserHash) =>
     `${WELLNESS_SERVICE}/wellness/dailyHeartRate/${userHash}`;
@@ -111,3 +110,10 @@ export const newsFeed = () =>
 
 export const upload = (format: UploadFileType) =>
     `${UPLOAD_SERVICE}/upload/${format}`;
+
+export const listGear = (userProfilePk: number, availableGearDate?: Date) =>
+    `${GEAR_SERVICE}/gear/filterGear?userProfilePk=${userProfilePk}${
+        availableGearDate
+            ? `&${availableGearDate.getFullYear()}-${availableGearDate.getMonth()}-${availableGearDate.getDay()}`
+            : ''
+    }`;
