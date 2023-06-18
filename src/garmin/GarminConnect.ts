@@ -573,13 +573,36 @@ export default class GarminConnect {
      * List the gear available at a certain date
      * @param userProfilePk, user profile private key (can be found in user or activity details)
      * @param availableGearDate, list gear available at this date only
-     * @returns {Promise<void>}
+     * @returns {Promise<Gear[]>}
      */
     async listGear(
         userProfilePk: number,
         availableGearDate?: Date
     ): Promise<Gear[]> {
         return this.client.get(urls.listGear(userProfilePk, availableGearDate));
+    }
+
+    /**
+     * Link gear to activity
+     * @param activityId, Activity ID
+     * @param gearUuid, UUID of the gear
+     * @returns {Promise<Gear>}
+     */
+    async linkGear(activityId: GCActivityId, gearUuid: string): Promise<Gear> {
+        return this.put(urls.linkGear(activityId, gearUuid), {});
+    }
+
+    /**
+     * Unlink gear to activity
+     * @param activityId, Activity ID
+     * @param gearUuid, UUID of the gear
+     * @returns {Promise<Gear>}
+     */
+    async unlinkGear(
+        activityId: GCActivityId,
+        gearUuid: string
+    ): Promise<Gear> {
+        return this.put(urls.unlinkGear(activityId, gearUuid), {});
     }
 
     // General methods

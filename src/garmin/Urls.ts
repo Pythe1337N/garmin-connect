@@ -117,3 +117,9 @@ export const listGear = (userProfilePk: number, availableGearDate?: Date) =>
             ? `&${availableGearDate.getFullYear()}-${availableGearDate.getMonth()}-${availableGearDate.getDay()}`
             : ''
     }`;
+
+export const linkGear = (activityId: GCActivityId, gearUuid: string) =>
+    `${GEAR_SERVICE}/gear/link/${gearUuid}/activity/${activityId}`;
+
+export const unlinkGear = (activityId: GCActivityId, gearUuid: string) =>
+    `${GEAR_SERVICE}/gear/unlink/${gearUuid}/activity/${activityId}`;
