@@ -103,6 +103,17 @@ export default class CFClient {
         return asJson<T>(body);
     }
 
+    async delete<T>(url: string) {
+        const options = {
+            method: 'DELETE',
+            uri: url,
+            jar: this.cookies,
+            headers: this.headers
+        };
+        const { body } = await this.scraper(options);
+        return asJson<T>(body);
+    }
+
     async postJson<T>(url: string, data: any, headers: Headers) {
         const options = {
             method: 'POST',

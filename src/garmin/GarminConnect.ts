@@ -2,13 +2,14 @@ import appRoot from 'app-root-path';
 import CFClient from '../common/CFClient';
 import { toDateString } from '../common/DateUtils';
 import * as urls from './Urls';
-import { ExportFileType, UploadFileType } from './Urls';
+import { ExportFileType, imageDelete, UploadFileType } from './Urls';
 import { CookieJar } from 'tough-cookie';
 import {
     GCActivityId,
     GCBadgeId,
     GCUserHash,
     IActivity,
+    IActivityDetails,
     IBadge,
     ISocialConnections,
     ISocialProfile,
@@ -283,6 +284,20 @@ export default class GarminConnect {
 
     /**
      * Get details about an activity
+     * @param activityId
+     * @returns {Promise<IActivityDetails>}
+     */
+    async getActivityDetails(
+        activityId: GCActivityId
+    ): Promise<IActivityDetails> {
+        if (activityId) {
+            return this.get(urls.activity(activityId));
+        }
+        return Promise.reject();
+    }
+
+    /**
+     * Get metrics details about an activity
      * @param activity
      * @param maxChartSize
      * @param maxPolylineSize
@@ -521,6 +536,38 @@ export default class GarminConnect {
             return this.get(urls.badgeDetail(badgeId));
         }
         return Promise.reject();
+    }
+
+    /**
+     * Uploads an image to an activity
+     * @param activity
+     * @param file the file to upload
+     * @returns {Promise<*>}
+     */
+    async uploadImage(activity: { activityId: GCActivityId }, file: string) {
+        return this.client.post(urls.image(activity.activityId), {
+            file: {
+                value: fs.readFileSync(file),
+                options: {
+                    filename: path.basename(file)
+                }
+            }
+        });
+    }
+
+    /**
+     * Delete an image from an activity
+     * @param activity
+     * @param imageId, can be found in `activityImages` array of the activity
+     * @returns {Promise<void>}
+     */
+    async deleteImage(
+        activity: { activityId: GCActivityId },
+        imageId: string
+    ): Promise<void> {
+        return this.client.delete(
+            urls.imageDelete(activity.activityId, imageId)
+        );
     }
 
     // General methods

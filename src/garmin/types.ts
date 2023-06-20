@@ -385,3 +385,185 @@ export interface IBadge {
     connectionNumber: number;
     connections: IBadgeSocialConnection[] | null;
 }
+
+export interface IActivityDetails {
+    activityId: number;
+    activityUUID: {
+        uuid: string;
+    };
+    activityName: string;
+    userProfileId: number;
+    isMultiSportParent: boolean;
+    activityTypeDTO: {
+        typeId: number;
+        typeKey: string;
+        parentTypeId: number;
+        isHidden: boolean;
+        restricted: boolean;
+        trimmable: boolean;
+    };
+    eventTypeDTO: {
+        typeId: number;
+        typeKey: string;
+        sortOrder: number;
+    };
+    accessControlRuleDTO: {
+        typeId: number;
+        typeKey: string;
+    };
+    timeZoneUnitDTO: {
+        unitId: number;
+        unitKey: string;
+        factor: number;
+        timeZone: string;
+    };
+    metadataDTO: {
+        isOriginal: boolean;
+        deviceApplicationInstallationId: number;
+        agentApplicationInstallationId?: null;
+        agentString?: null;
+        fileFormat: {
+            formatId: number;
+            formatKey: string;
+        };
+        associatedCourseId?: null;
+        lastUpdateDate: string;
+        uploadedDate: string;
+        videoUrl?: null;
+        hasPolyline: boolean;
+        hasChartData: boolean;
+        hasHrTimeInZones: boolean;
+        hasPowerTimeInZones: boolean;
+        userInfoDto: {
+            userProfilePk: number;
+            displayname: string;
+            fullname: string;
+            profileImageUrlLarge?: null;
+            profileImageUrlMedium: string;
+            profileImageUrlSmall: string;
+            userPro: boolean;
+        };
+        childIds?: null[] | null;
+        childActivityTypes?: null[] | null;
+        sensors?:
+            | {
+                  manufacturer: string;
+                  serialNumber: number;
+                  sku: string;
+                  fitProductNumber: number;
+                  sourceType: string;
+                  antplusDeviceType: string;
+                  softwareVersion: number;
+                  batteryStatus: string;
+              }[]
+            | null;
+        activityImages?:
+            | {
+                  imageId: string;
+                  url: string;
+                  smallUrl: string;
+                  mediumUrl: string;
+                  expirationTimestamp?: null;
+                  latitude?: null;
+                  longitude?: null;
+                  photoDate?: null;
+              }[]
+            | null;
+        manufacturer: string;
+        diveNumber?: null;
+        lapCount: number;
+        associatedWorkoutId: number;
+        isAtpActivity?: null;
+        deviceMetaDataDTO: {
+            deviceId: string;
+            deviceTypePk: number;
+            deviceVersionPk: number;
+        };
+        hasIntensityIntervals: boolean;
+        hasSplits: boolean;
+        eBikeMaxAssistModes?: null;
+        eBikeBatteryUsage?: null;
+        eBikeBatteryRemaining?: null;
+        eBikeAssistModeInfoDTOList?: null;
+        calendarEventInfo?: null;
+        personalRecord: boolean;
+        gcj02: boolean;
+        runPowerWindDataEnabled?: null;
+        autoCalcCalories: boolean;
+        favorite: boolean;
+        manualActivity: boolean;
+        trimmed: boolean;
+        elevationCorrected: boolean;
+    };
+    summaryDTO: {
+        startTimeLocal: string;
+        startTimeGMT: string;
+        startLatitude: number;
+        startLongitude: number;
+        distance: number;
+        duration: number;
+        movingDuration: number;
+        elapsedDuration: number;
+        elevationGain: number;
+        elevationLoss: number;
+        maxElevation: number;
+        minElevation: number;
+        averageSpeed: number;
+        averageMovingSpeed: number;
+        maxSpeed: number;
+        calories: number;
+        averageHR: number;
+        maxHR: number;
+        averageRunCadence: number;
+        maxRunCadence: number;
+        averageTemperature: number;
+        maxTemperature: number;
+        minTemperature: number;
+        groundContactTime: number;
+        groundContactBalanceLeft: number;
+        strideLength: number;
+        verticalOscillation: number;
+        trainingEffect: number;
+        anaerobicTrainingEffect: number;
+        aerobicTrainingEffectMessage: string;
+        anaerobicTrainingEffectMessage: string;
+        verticalRatio: number;
+        endLatitude: number;
+        endLongitude: number;
+        maxVerticalSpeed: number;
+        minActivityLapDuration: number;
+    };
+    locationName: string;
+    splitSummaries?:
+        | {
+              distance: number;
+              duration: number;
+              movingDuration: number;
+              elapsedDuration: number;
+              elevationGain: number;
+              elevationLoss: number;
+              averageSpeed: number;
+              averageMovingSpeed: number;
+              maxSpeed: number;
+              calories: number;
+              averageHR: number;
+              maxHR: number;
+              averageRunCadence: number;
+              maxRunCadence: number;
+              averageTemperature: number;
+              maxTemperature: number;
+              minTemperature: number;
+              groundContactTime: number;
+              groundContactBalanceLeft: number;
+              strideLength: number;
+              verticalOscillation: number;
+              verticalRatio: number;
+              totalExerciseReps: number;
+              splitType: string;
+              noOfSplits: number;
+              maxElevationGain: number;
+              averageElevationGain: number;
+              maxDistance: number;
+          }[]
+        | null;
+}

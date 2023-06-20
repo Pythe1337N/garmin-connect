@@ -129,7 +129,18 @@ GCClient.getActivities(10, 5);
 
 ### Activity details
 
-Use the activityId to get details about that specific activity.
+Use the activityId to get activity details.
+
+```js
+// search for the activity (optional)
+const [activity] = await GCClient.getActivities(0, 1);
+// get the activity details
+const activityDetails = await GCClient.getActivityDetails(activity.activityId);
+```
+
+### Activity metrics details
+
+Use the activityId to get metrics details about that specific activity.
 
 ```js
 const activities = await GCClient.getActivities(0, 1);
@@ -172,6 +183,33 @@ const upload = await GCClient.uploadActivity('./some/path/to/file.fit');
 // not working
 const activityId = upload.detailedImportResult.successes[0].internalId;
 const uploadId = upload.detailedImportResult.uploadId;
+```
+
+### Upload activity image
+
+Uploads an image to activity
+
+```js
+const [latestActivty] = await GCClient.getActivities(0, 1);
+
+const upload = await GCClient.uploadImage(
+    latestActivty,
+    './some/path/to/file.jpg'
+);
+```
+
+### Delete activity image
+
+Delete an image from activity
+
+```js
+const [activity] = await GCClient.getActivities(0, 1);
+const activityDetails = await GCClient.getActivityDetails(activity.activityId);
+
+await GCClient.deleteImage(
+    activity,
+    activityDetails.metadataDTO.activityImages[0].imageId
+);
 ```
 
 ### Step count
