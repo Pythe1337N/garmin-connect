@@ -26,7 +26,7 @@ const { GarminConnect } = require('garmin-connect');
 // Create a new Garmin Connect Client
 const GCClient = new GarminConnect();
 // Uses credentials from garmin.config.json or uses supplied params
-await GCClient.login('my.email@example.com', 'MySecretPassword');
+await GCClient.login({"username": "my.email@example.com", "password": "MySecretPassword"});
 const userInfo = await GCClient.getUserInfo();
 ```
 
