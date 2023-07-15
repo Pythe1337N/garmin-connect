@@ -24,9 +24,9 @@ $ npm install garmin-connect
 ```js
 const { GarminConnect } = require('garmin-connect');
 // Create a new Garmin Connect Client
-const GCClient = new GarminConnect();
+const GCClient = new GarminConnect({"username": "my.email@example.com", "password": "MySecretPassword"});
 // Uses credentials from garmin.config.json or uses supplied params
-await GCClient.login('my.email@example.com', 'MySecretPassword');
+await GCClient.login();
 const userInfo = await GCClient.getUserInfo();
 ```
 
