@@ -624,4 +624,10 @@ export default class GarminConnect {
         this.triggerEvent(Event.sessionChange, this.sessionJson);
         return response as T;
     }
+
+    async delete<T>(url: string) {
+        const response = await this.client.delete<T>(url);
+        this.triggerEvent(Event.sessionChange, this.sessionJson);
+        return response as T;
+    }
 }
