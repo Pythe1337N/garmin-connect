@@ -3,6 +3,7 @@ export type GCUserHash = string;
 export type GCActivityId = number;
 export type GCWorkoutId = string;
 export type GCBadgeId = number;
+export type GarminDomain = 'garmin.com' | 'garmin.cn';
 
 export interface IUserInfo {
     userProfileId: GCUserProfileId;
