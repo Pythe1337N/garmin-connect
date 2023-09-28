@@ -1,10 +1,37 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, {
+    AxiosError,
+    AxiosInstance,
+    AxiosRequestConfig,
+    AxiosResponse
+} from 'axios';
 
 export class HttpClient {
     client: AxiosInstance;
 
     constructor() {
         this.client = axios.create();
+        this.client.interceptors.response.use(
+            (response) => response,
+            (error) => {
+                if (axios.isAxiosError(error)) {
+                    if (error?.response) this.handleError(error?.response);
+                }
+                throw error;
+            }
+        );
+    }
+
+    handleError(response: AxiosResponse): void {
+        this.handleHttpError(response);
+    }
+
+    handleHttpError(response: AxiosResponse): void {
+        const { status, statusText, data } = response;
+        const msg = `ERROR: (${status}), ${statusText}, ${JSON.stringify(
+            data
+        )}`;
+        console.error(msg);
+        throw new Error(msg);
     }
 
     async get(url: string, config?: AxiosRequestConfig<any>) {
