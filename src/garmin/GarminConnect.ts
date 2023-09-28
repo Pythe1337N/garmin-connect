@@ -1,11 +1,11 @@
 import appRoot from 'app-root-path';
 import FormData from 'form-data';
 import qs from 'qs';
-const OAuth = require('oauth-1.0a');
 const crypto = require('crypto');
 import { HttpClient } from '../common/HttpClient';
 import { UrlClass } from './UrlClass';
-import { GCUserHash, GarminDomain } from './types';
+import { GCUserHash, GarminDomain, IOauth1, IOauth1Token } from './types';
+import OAuth from 'oauth-1.0a';
 
 const CSRF_RE = new RegExp('name="_csrf"\\s+value="(.+?)"');
 const TICKET_RE = new RegExp('ticket=([^"]+)"');
@@ -48,6 +48,7 @@ export default class GarminConnect {
     private credentials: GCCredentials;
     private listeners: Listeners;
     private url: UrlClass;
+    // private oauth1: OAuth;
     constructor(
         credentials: GCCredentials | undefined = config,
         domain: GarminDomain = 'garmin.com'
@@ -80,8 +81,9 @@ export default class GarminConnect {
             locale: 'en',
             service: this.url.GC_MODERN
         };
-        const step1Url =
-            this.url.GARMIN_SSO_EMBED + '?' + qs.stringify(step1Params);
+        const step1Url = `${this.url.GARMIN_SSO_EMBED}?${qs.stringify(
+            step1Params
+        )}`;
         console.log('login - step1Url:', step1Url);
         await this.client.get(step1Url);
 
@@ -126,8 +128,8 @@ export default class GarminConnect {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 Dnt: 1,
-                Origin: 'https://sso.garmin.com',
-                Referer: this.url.GARMIN_SSO,
+                Origin: this.url.GARMIN_SSO_ORIGIN,
+                Referer: this.url.SIGNIN_URL,
                 'User-Agent': USER_AGENT_BROWSER
             }
         });
@@ -140,16 +142,25 @@ export default class GarminConnect {
         console.log('login - ticket:', ticket);
 
         // Step4: Oauth1
-        const step4Params = {
+        const oauth1 = await this.getOauth1Token(ticket);
+
+        // Step 5: Oauth2
+        await this.exchange(oauth1);
+
+        return this;
+    }
+
+    async getOauth1Token(ticket: string): Promise<IOauth1> {
+        const params = {
             ticket,
             'login-url': this.url.GARMIN_SSO_EMBED,
             'accepts-mfa-tokens': true
         };
-        const step4Url = `${this.url.OAUTH_URL}/preauthorized?${qs.stringify(
-            step4Params
+        const url = `${this.url.OAUTH_URL}/preauthorized?${qs.stringify(
+            params
         )}`;
 
-        const step4Oauth = OAuth({
+        const oauth = new OAuth({
             consumer: OAUTH_CONSUMER,
             signature_method: 'HMAC-SHA1',
             hash_function(base_string: string, key: string) {
@@ -161,51 +172,46 @@ export default class GarminConnect {
         });
 
         const step4RequestData = {
-            url: step4Url,
+            url: url,
             method: 'GET'
         };
-        const step4Headers = step4Oauth.toHeader(
-            step4Oauth.authorize(step4RequestData)
-        );
-        console.log('login - step4Headers:', step4Headers);
+        const headers = oauth.toHeader(oauth.authorize(step4RequestData));
+        console.log('getOauth1Token - headers:', headers);
 
-        const step4Response = await this.client.get(step4Url, {
+        const response = await this.client.get(url, {
             headers: {
-                ...step4Headers,
+                ...headers,
                 'User-Agent': USER_AGENT_CONNECTMOBILE
             }
         });
-        console.log('login - step4Response:', step4Response);
-        const step4Token = qs.parse(step4Response);
-        console.log('login - step4Token:', step4Token);
+        console.log('getOauth1Token - response:', response);
+        const token = qs.parse(response) as unknown as IOauth1Token;
+        console.log('getOauth1Token - token:', token);
+        return { token, oauth };
+    }
 
-        // Step 5: Oauth2
-        const step5Token = {
-            key: step4Token.oauth_token,
-            secret: step4Token.oauth_token_secret
+    async exchange(oauth1: IOauth1) {
+        const token = {
+            key: oauth1.token.oauth_token,
+            secret: oauth1.token.oauth_token_secret
         };
 
-        const step5BaseUrl = `${this.url.OAUTH_URL}/exchange/user/2.0`;
-        const step5RequestData = {
-            url: step5BaseUrl,
+        const baseUrl = `${this.url.OAUTH_URL}/exchange/user/2.0`;
+        const requestData = {
+            url: baseUrl,
             method: 'POST',
             data: null
         };
 
-        const step5AuthData = step4Oauth.authorize(
-            step5RequestData,
-            step5Token
-        );
+        const step5AuthData = oauth1.oauth.authorize(requestData, token);
         console.log('login - step5AuthData:', step5AuthData);
-        const step5Url = step5BaseUrl + '?' + qs.stringify(step5AuthData);
-        const step5Response = await this.client.post(step5Url, null, {
+        const url = `${baseUrl}?${qs.stringify(step5AuthData)}`;
+        const response = await this.client.post(url, null, {
             headers: {
                 'User-Agent': USER_AGENT_CONNECTMOBILE,
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
-        console.log('login - step5Response:', step5Response);
-
-        return this;
+        console.log('exchange - response:', response);
     }
 }

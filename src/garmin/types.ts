@@ -589,3 +589,13 @@ export interface Gear {
     createDate: string;
     updateDate: string;
 }
+
+export interface IOauth1 {
+    token: IOauth1Token;
+    oauth: OAuth;
+}
+
+export interface IOauth1Token {
+    oauth_token: string;
+    oauth_token_secret: string;
+}
