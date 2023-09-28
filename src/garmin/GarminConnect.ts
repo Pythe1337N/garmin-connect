@@ -14,6 +14,7 @@ import {
 } from './types';
 import OAuth from 'oauth-1.0a';
 import { DateTime } from 'luxon';
+import { RawAxiosRequestHeaders } from 'axios';
 
 const CSRF_RE = new RegExp('name="_csrf"\\s+value="(.+?)"');
 const TICKET_RE = new RegExp('ticket=([^"]+)"');
@@ -223,10 +224,11 @@ export default class GarminConnect {
         });
         console.log('exchange - response:', response);
         this.client.oauth2Token = this.setOauth2TokenExpiresAt(response);
-        this.client.setHeader(
-            this.client.oauth2Token.access_token,
-            this.url.GC_API
-        );
+
+        this.client.setCommonHeader({
+            Authorization: 'Bearer ' + this.client.oauth2Token.access_token,
+            ...this.getGCCommonHeader()
+        });
 
         console.log('exchange - oauth2Token:', this.client.oauth2Token);
     }
@@ -236,6 +238,14 @@ export default class GarminConnect {
         token['refresh_token_expires_at'] =
             DateTime.now().toSeconds() + token['refresh_token_expires_in'];
         return token;
+    }
+
+    getGCCommonHeader(): RawAxiosRequestHeaders {
+        return {
+            'Di-Backend': this.url.GC_API,
+            Nk: 'NT',
+            Dnt: 1
+        };
     }
 
     // User Settings

@@ -1,10 +1,13 @@
 import axios, {
     AxiosError,
+    AxiosHeaders,
     AxiosInstance,
     AxiosRequestConfig,
-    AxiosResponse
+    AxiosResponse,
+    RawAxiosRequestHeaders
 } from 'axios';
 import { IOauth1Token, IOauth2Token } from '../garmin/types';
+import _ from 'lodash';
 
 export class HttpClient {
     client: AxiosInstance;
@@ -24,11 +27,10 @@ export class HttpClient {
         );
     }
 
-    setHeader(token: string, backendApi: string): void {
-        this.client.defaults.headers.common[
-            'Authorization'
-        ] = `Bearer ${token}`;
-        this.client.defaults.headers.common['Di-Backend'] = backendApi;
+    setCommonHeader(headers: RawAxiosRequestHeaders): void {
+        _.each(headers, (headerValue, key) => {
+            this.client.defaults.headers.common[key] = headerValue;
+        });
     }
 
     handleError(response: AxiosResponse): void {
