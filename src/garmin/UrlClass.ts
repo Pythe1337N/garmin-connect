@@ -29,6 +29,9 @@ export class UrlClass {
     get OAUTH_URL() {
         return `${this.GC_API}/oauth-service/oauth`;
     }
+    get USER_SETTINGS() {
+        return `${this.GC_API}/userprofile-service/userprofile/user-settings/`;
+    }
 }
 
 export enum ExportFileType {

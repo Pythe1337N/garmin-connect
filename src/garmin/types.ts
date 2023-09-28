@@ -599,3 +599,17 @@ export interface IOauth1Token {
     oauth_token: string;
     oauth_token_secret: string;
 }
+
+export interface IOauth2Token {
+    scope: string;
+    jti: string;
+    access_token: string;
+    token_type: string;
+    refresh_token: string;
+    expires_in: number;
+    refresh_token_expires_in: number;
+
+    // added
+    expires_at?: number;
+    refresh_token_expires_at?: number;
+}

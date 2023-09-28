@@ -4,9 +4,12 @@ import axios, {
     AxiosRequestConfig,
     AxiosResponse
 } from 'axios';
+import { IOauth1Token, IOauth2Token } from '../garmin/types';
 
 export class HttpClient {
     client: AxiosInstance;
+    oauth1Token: IOauth1Token | undefined;
+    oauth2Token: IOauth2Token | undefined;
 
     constructor() {
         this.client = axios.create();
@@ -19,6 +22,13 @@ export class HttpClient {
                 throw error;
             }
         );
+    }
+
+    setHeader(token: string, backendApi: string): void {
+        this.client.defaults.headers.common[
+            'Authorization'
+        ] = `Bearer ${token}`;
+        this.client.defaults.headers.common['Di-Backend'] = backendApi;
     }
 
     handleError(response: AxiosResponse): void {

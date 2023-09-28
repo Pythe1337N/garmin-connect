@@ -4,8 +4,16 @@ import qs from 'qs';
 const crypto = require('crypto');
 import { HttpClient } from '../common/HttpClient';
 import { UrlClass } from './UrlClass';
-import { GCUserHash, GarminDomain, IOauth1, IOauth1Token } from './types';
+import {
+    GCUserHash,
+    GarminDomain,
+    IOauth1,
+    IOauth1Token,
+    IOauth2Token,
+    IUserInfo
+} from './types';
 import OAuth from 'oauth-1.0a';
+import { DateTime } from 'luxon';
 
 const CSRF_RE = new RegExp('name="_csrf"\\s+value="(.+?)"');
 const TICKET_RE = new RegExp('ticket=([^"]+)"');
@@ -187,6 +195,7 @@ export default class GarminConnect {
         console.log('getOauth1Token - response:', response);
         const token = qs.parse(response) as unknown as IOauth1Token;
         console.log('getOauth1Token - token:', token);
+        this.client.oauth1Token = token;
         return { token, oauth };
     }
 
@@ -213,5 +222,28 @@ export default class GarminConnect {
             }
         });
         console.log('exchange - response:', response);
+        this.client.oauth2Token = this.setOauth2TokenExpiresAt(response);
+        this.client.setHeader(
+            this.client.oauth2Token.access_token,
+            this.url.GC_API
+        );
+
+        console.log('exchange - oauth2Token:', this.client.oauth2Token);
+    }
+
+    setOauth2TokenExpiresAt(token: IOauth2Token): IOauth2Token {
+        token['expires_at'] = DateTime.now().toSeconds() + token['expires_in'];
+        token['refresh_token_expires_at'] =
+            DateTime.now().toSeconds() + token['refresh_token_expires_in'];
+        return token;
+    }
+
+    // User Settings
+    /**
+     * Get basic user information
+     * @returns {Promise<*>}
+     */
+    async getUserSettings(): Promise<any> {
+        return this.client.get(this.url.USER_SETTINGS);
     }
 }

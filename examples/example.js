@@ -23,6 +23,11 @@ const main = async () => {
 
     // Log info to make sure signin was successful
     // console.log(info);
+    // // Get user settings
+    const settings = await GCClient.getUserSettings();
+
+    // Log info to make sure signin was successful
+    console.log(settings);
 };
 
 // Run the code
