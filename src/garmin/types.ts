@@ -3,6 +3,7 @@ export type GCUserHash = string;
 export type GCActivityId = number;
 export type GCWorkoutId = string;
 export type GCBadgeId = number;
+export type GarminDomain = 'garmin.com' | 'garmin.cn';
 
 export interface IUserInfo {
     userProfileId: GCUserProfileId;
@@ -587,4 +588,28 @@ export interface Gear {
     notified: boolean;
     createDate: string;
     updateDate: string;
+}
+
+export interface IOauth1 {
+    token: IOauth1Token;
+    oauth: OAuth;
+}
+
+export interface IOauth1Token {
+    oauth_token: string;
+    oauth_token_secret: string;
+}
+
+export interface IOauth2Token {
+    scope: string;
+    jti: string;
+    access_token: string;
+    token_type: string;
+    refresh_token: string;
+    expires_in: number;
+    refresh_token_expires_in: number;
+
+    // added
+    expires_at?: number;
+    refresh_token_expires_at?: number;
 }
