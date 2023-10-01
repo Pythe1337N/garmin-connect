@@ -1,11 +1,27 @@
 import appRoot from 'app-root-path';
 
+import FormData from 'form-data';
+import { DateTime } from 'luxon';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { HttpClient } from '../common/HttpClient';
 import { checkIsDirectory, createDirectory, writeToFile } from '../utils';
 import { UrlClass } from './UrlClass';
-import { GCUserHash, GarminDomain, IOauth1Token, IOauth2Token } from './types';
+import {
+    ExportFileTypeValue,
+    GCActivityId,
+    GCUserHash,
+    GarminDomain,
+    IActivity,
+    ICountActivities,
+    IOauth1Token,
+    IOauth2Token,
+    ISocialProfile,
+    IUserSettings,
+    UploadFileType,
+    UploadFileTypeTypeValue
+} from './types';
+import _ from 'lodash';
 
 let config: GCCredentials | undefined = undefined;
 
@@ -103,12 +119,105 @@ export default class GarminConnect {
         this.client.oauth2Token = oauth2;
     }
 
-    // User Settings
-    /**
-     * Get basic user information
-     * @returns {Promise<*>}
-     */
-    async getUserSettings(): Promise<any> {
-        return this.client.get(this.url.USER_SETTINGS);
+    async getUserSettings(): Promise<IUserSettings> {
+        return this.client.get<IUserSettings>(this.url.USER_SETTINGS);
+    }
+
+    async getUserProfile(): Promise<ISocialProfile> {
+        return this.client.get<ISocialProfile>(this.url.USER_PROFILE);
+    }
+
+    async getActivities(start: number, limit: number): Promise<IActivity[]> {
+        return this.client.get<IActivity[]>(this.url.ACTIVITIES, {
+            params: { start, limit }
+        });
+    }
+    async getActivity(activity: {
+        activityId: GCActivityId;
+    }): Promise<IActivity> {
+        if (!activity.activityId) throw new Error('Missing activityId');
+        return this.client.get<IActivity>(
+            this.url.ACTIVITY + activity.activityId
+        );
+    }
+    async countActivities(): Promise<ICountActivities> {
+        return this.client.get<ICountActivities>(this.url.STAT_ACTIVITIES, {
+            params: {
+                aggregation: 'lifetime',
+                startDate: '1970-01-01',
+                endDate: DateTime.now().toFormat('yyyy-MM-dd'),
+                metric: 'duration'
+            }
+        });
+    }
+
+    async downloadOriginalActivityData(
+        activity: { activityId: GCActivityId },
+        dir: string,
+        type: ExportFileTypeValue = 'zip'
+    ): Promise<void> {
+        if (!activity.activityId) throw new Error('Missing activityId');
+        if (!checkIsDirectory(dir)) {
+            createDirectory(dir);
+        }
+        let fileBuffer: Buffer;
+        if (type === 'tcx') {
+            fileBuffer = await this.client.get(
+                this.url.DOWNLOAD_TCX + activity.activityId
+            );
+        } else if (type === 'gpx') {
+            fileBuffer = await this.client.get(
+                this.url.DOWNLOAD_GPX + activity.activityId
+            );
+        } else if (type === 'kml') {
+            fileBuffer = await this.client.get(
+                this.url.DOWNLOAD_KML + activity.activityId
+            );
+        } else if (type === 'zip') {
+            fileBuffer = await this.client.get<Buffer>(
+                this.url.DOWNLOAD_ZIP + activity.activityId,
+                {
+                    responseType: 'arraybuffer'
+                }
+            );
+        } else {
+            throw new Error(
+                'downloadOriginalActivityData - Invalid type: ' + type
+            );
+        }
+        writeToFile(
+            path.join(dir, `${activity.activityId}.${type}`),
+            fileBuffer
+        );
+    }
+
+    async uploadActivity(
+        file: string,
+        format: UploadFileTypeTypeValue = 'fit'
+    ) {
+        const detectedFormat = (format || path.extname(file))?.toLowerCase();
+        console.log('uploadActivity - detectedFormat:', detectedFormat);
+        const filename = path.basename(file);
+        console.log('uploadActivity - filename:', filename);
+
+        if (!_.includes(UploadFileType, detectedFormat)) {
+            throw new Error('uploadActivity - Invalid format: ' + format);
+        }
+
+        const fileBuffer = fs.createReadStream(file);
+        const form = new FormData();
+        form.append('userfile', fileBuffer);
+        const response = this.client.post(
+            this.url.UPLOAD + '.' + format,
+            form,
+            {
+                headers: {
+                    ...form.getHeaders()
+                }
+            }
+        );
+        // TODO: FIX THIS. GARMIN Activity Uploads service is down
+        // https://connect.garmin.com/status/
+        return response;
     }
 }

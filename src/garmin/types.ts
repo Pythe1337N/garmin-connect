@@ -5,6 +5,21 @@ export type GCWorkoutId = string;
 export type GCBadgeId = number;
 export type GarminDomain = 'garmin.com' | 'garmin.cn';
 
+export enum ExportFileType {
+    tcx = 'tcx',
+    gpx = 'gpx',
+    kml = 'kml',
+    zip = 'zip'
+}
+
+export enum UploadFileType {
+    tcx = 'tcx',
+    gpx = 'gpx',
+    fit = 'fit'
+}
+export type ExportFileTypeValue = keyof typeof ExportFileType;
+export type UploadFileTypeTypeValue = keyof typeof UploadFileType;
+
 export interface IUserInfo {
     userProfileId: GCUserProfileId;
     username: string;
@@ -605,6 +620,7 @@ export interface IOauth1Token {
 }
 
 export interface IOauth2Token {
+    // from Garmin API
     scope: string;
     jti: string;
     access_token: string;
@@ -618,4 +634,92 @@ export interface IOauth2Token {
     refresh_token_expires_at: number;
     last_update_date: string;
     expires_date: string;
+}
+
+export interface IUserSettings {
+    id: number;
+    userData: IUserData;
+    userSleep: {
+        sleepTime: number;
+        defaultSleepTime: boolean;
+        wakeTime: number;
+        defaultWakeTime: boolean;
+    };
+    connectDate: unknown;
+    sourceType: unknown;
+    userSleepWindows: IUserSleepWindows[];
+}
+export interface IUserData {
+    gender: unknown;
+    weight: unknown;
+    height: unknown;
+    timeFormat: string;
+    birthDate: unknown;
+    measurementSystem: string;
+    activityLevel: unknown;
+    handedness: string;
+    powerFormat: {
+        formatId: number;
+        formatKey: string;
+        minFraction: number;
+        maxFraction: number;
+        groupingUsed: boolean;
+        displayFormat: unknown;
+    };
+    heartRateFormat: {
+        formatId: number;
+        formatKey: string;
+        minFraction: number;
+        maxFraction: number;
+        groupingUsed: boolean;
+        displayFormat: unknown;
+    };
+    firstDayOfWeek: {
+        dayId: number;
+        dayName: string;
+        sortOrder: number;
+        isPossibleFirstDay: boolean;
+    };
+    vo2MaxRunning: unknown;
+    vo2MaxCycling: unknown;
+    lactateThresholdSpeed: unknown;
+    lactateThresholdHeartRate: unknown;
+    diveNumber: unknown;
+    intensityMinutesCalcMethod: string;
+    moderateIntensityMinutesHrZone: number;
+    vigorousIntensityMinutesHrZone: number;
+    hydrationMeasurementUnit: string;
+    hydrationContainers: unknown[];
+    hydrationAutoGoalEnabled: boolean;
+    firstbeatMaxStressScore: unknown;
+    firstbeatCyclingLtTimestamp: unknown;
+    firstbeatRunningLtTimestamp: unknown;
+    thresholdHeartRateAutoDetected: unknown;
+    ftpAutoDetected: unknown;
+    trainingStatusPausedDate: unknown;
+    weatherLocation: {
+        useFixedLocation: unknown;
+        latitude: unknown;
+        longitude: unknown;
+        locationName: unknown;
+        isoCountryCode: unknown;
+        postalCode: unknown;
+    };
+    golfDistanceUnit: string;
+    golfElevationUnit: unknown;
+    golfSpeedUnit: unknown;
+    externalBottomTime: unknown;
+}
+export interface IUserSleepWindows {
+    sleepWindowFrequency: string;
+    startSleepTimeSecondsFromMidnight: number;
+    endSleepTimeSecondsFromMidnight: number;
+}
+
+export interface ICountActivities {
+    countOfActivities: number;
+    date: string;
+    stats: {
+        all: Record<string, any>;
+    };
 }

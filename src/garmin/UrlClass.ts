@@ -1,3 +1,4 @@
+import { UPLOAD_SERVICE } from './Urls';
 import { GarminDomain } from './types';
 
 export class UrlClass {
@@ -32,17 +33,31 @@ export class UrlClass {
     get USER_SETTINGS() {
         return `${this.GC_API}/userprofile-service/userprofile/user-settings/`;
     }
-}
-
-export enum ExportFileType {
-    tcx = 'tcx',
-    gpx = 'gpx',
-    kml = 'kml',
-    zip = 'zip'
-}
-
-export enum UploadFileType {
-    tcx = 'tcx',
-    gpx = 'gpx',
-    fit = 'fit'
+    get USER_PROFILE() {
+        return `${this.GC_API}/userprofile-service/socialProfile`;
+    }
+    get ACTIVITIES() {
+        return `${this.GC_API}/activitylist-service/activities/search/activities`;
+    }
+    get ACTIVITY() {
+        return `${this.GC_API}/activity-service/activity/`;
+    }
+    get STAT_ACTIVITIES() {
+        return `${this.GC_API}/fitnessstats-service/activity`;
+    }
+    get DOWNLOAD_ZIP() {
+        return `${this.GC_API}/download-service/files/activity/`;
+    }
+    get DOWNLOAD_GPX() {
+        return `${this.GC_API}/download-service/export/gpx/activity/`;
+    }
+    get DOWNLOAD_TCX() {
+        return `${this.GC_API}/download-service/export/tcx/activity/`;
+    }
+    get DOWNLOAD_KML() {
+        return `${this.GC_API}/download-service/export/kml/activity/`;
+    }
+    get UPLOAD() {
+        return `${this.BASE_URL}/upload-service/upload/`;
+    }
 }
