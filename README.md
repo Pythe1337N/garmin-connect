@@ -1,5 +1,18 @@
 # garmin-connect
 
+## v1.6.0 refactor
+
+TODO:
+
+-   [x] New HttpClient class
+-   [x] Login and get user token
+-   [x] Garmin URLs works with `garmin.cn` and `garmin.com`
+-   [ ] Refector GarminConnect.ts. Doing
+-   [ ] Handle MFA
+-   [x] Auto refresh Ouath2 token
+-   [x] Oauth1,Oauth2 token import and export.
+-   [ ] Replace new urls of Activity,Profile,Gear etc.
+
 A powerful JavaScript library for connecting to Garmin Connect for sending and receiving health and workout data. It comes with some predefined methods to get and set different kinds of data for your Garmin account, but also have the possibility to make [custom requests](#custom-requests) `GET`, `POST` and `PUT` are currently supported. This makes it easy to implement whatever may be missing to suite your needs.
 
 ## Prerequisites
@@ -24,7 +37,10 @@ $ npm install garmin-connect
 ```js
 const { GarminConnect } = require('garmin-connect');
 // Create a new Garmin Connect Client
-const GCClient = new GarminConnect({"username": "my.email@example.com", "password": "MySecretPassword"});
+const GCClient = new GarminConnect({
+    username: 'my.email@example.com',
+    password: 'MySecretPassword'
+});
 // Uses credentials from garmin.config.json or uses supplied params
 await GCClient.login();
 const userInfo = await GCClient.getUserInfo();
@@ -360,4 +376,3 @@ For now, this library only supports the following:
 -   Get earned badges
 -   Get available badges
 -   Get details about one specific badge
-

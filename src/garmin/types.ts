@@ -590,6 +590,10 @@ export interface Gear {
     updateDate: string;
 }
 
+export interface IOauth1Consumer {
+    key: string;
+    secret: string;
+}
 export interface IOauth1 {
     token: IOauth1Token;
     oauth: OAuth;
@@ -610,6 +614,8 @@ export interface IOauth2Token {
     refresh_token_expires_in: number;
 
     // added
-    expires_at?: number;
-    refresh_token_expires_at?: number;
+    expires_at: number;
+    refresh_token_expires_at: number;
+    last_update_date: string;
+    expires_date: string;
 }
