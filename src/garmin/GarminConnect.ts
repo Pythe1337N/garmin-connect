@@ -48,7 +48,7 @@ export enum Event {
 export interface Session {}
 
 export default class GarminConnect {
-    private client: HttpClient;
+    client: HttpClient;
     private _userHash: GCUserHash | undefined;
     private credentials: GCCredentials;
     private listeners: Listeners;
