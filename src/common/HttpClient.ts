@@ -259,11 +259,14 @@ export class HttpClient {
     }
 
     async refreshOauth2Token() {
-        if (!this.oauth2Token || !this.oauth1Token || !this.OAUTH_CONSUMER) {
-            throw new Error('No Oauth2Token or Oauth1Token or OAUTH_CONSUMER');
+        if (!this.OAUTH_CONSUMER) {
+            await this.fetchOauthConsumer();
+        }
+        if (!this.oauth2Token || !this.oauth1Token) {
+            throw new Error('No Oauth2Token or Oauth1Token');
         }
         const oauth1 = {
-            oauth: this.getOauthClient(this.OAUTH_CONSUMER),
+            oauth: this.getOauthClient(this.OAUTH_CONSUMER!),
             token: this.oauth1Token
         };
         await this.exchange(oauth1);
