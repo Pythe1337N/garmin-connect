@@ -181,7 +181,7 @@ export class HttpClient {
         const step1Url = `${this.url.GARMIN_SSO_EMBED}?${qs.stringify(
             step1Params
         )}`;
-        console.log('login - step1Url:', step1Url);
+        // console.log('login - step1Url:', step1Url);
         await this.client.get(step1Url);
 
         // Step2 Get _csrf
@@ -192,7 +192,7 @@ export class HttpClient {
             gauthHost: this.url.GARMIN_SSO_EMBED
         };
         const step2Url = `${this.url.SIGNIN_URL}?${qs.stringify(step2Params)}`;
-        console.log('login - step2Url:', step2Url);
+        // console.log('login - step2Url:', step2Url);
         const step2Result = await this.get<string>(step2Url);
         // console.log('login - step2Result:', step2Result)
         const csrfRegResult = CSRF_RE.exec(step2Result);
@@ -200,7 +200,7 @@ export class HttpClient {
             throw new Error('login - csrf not found');
         }
         const csrf_token = csrfRegResult[1];
-        console.log('login - csrf:', csrf_token);
+        // console.log('login - csrf:', csrf_token);
 
         // Step3 Get ticket
         const signinParams = {
@@ -215,7 +215,7 @@ export class HttpClient {
             redirectAfterAccountCreationUrl: this.url.GARMIN_SSO_EMBED
         };
         const step3Url = `${this.url.SIGNIN_URL}?${qs.stringify(signinParams)}`;
-        console.log('login - step3Url:', step3Url);
+        // console.log('login - step3Url:', step3Url);
         const step3Form = new FormData();
         step3Form.append('username', username);
         step3Form.append('password', password);
@@ -293,7 +293,7 @@ export class HttpClient {
             method: 'GET'
         };
         const headers = oauth.toHeader(oauth.authorize(step4RequestData));
-        console.log('getOauth1Token - headers:', headers);
+        // console.log('getOauth1Token - headers:', headers);
 
         const response = await this.get<string>(url, {
             headers: {
@@ -301,9 +301,9 @@ export class HttpClient {
                 'User-Agent': USER_AGENT_CONNECTMOBILE
             }
         });
-        console.log('getOauth1Token - response:', response);
+        // console.log('getOauth1Token - response:', response);
         const token = qs.parse(response) as unknown as IOauth1Token;
-        console.log('getOauth1Token - token:', token);
+        // console.log('getOauth1Token - token:', token);
         this.oauth1Token = token;
         return { token, oauth };
     }
@@ -327,7 +327,7 @@ export class HttpClient {
             key: oauth1.token.oauth_token,
             secret: oauth1.token.oauth_token_secret
         };
-        console.log('exchange - token:', token);
+        // console.log('exchange - token:', token);
 
         const baseUrl = `${this.url.OAUTH_URL}/exchange/user/2.0`;
         const requestData = {
@@ -337,9 +337,9 @@ export class HttpClient {
         };
 
         const step5AuthData = oauth1.oauth.authorize(requestData, token);
-        console.log('login - step5AuthData:', step5AuthData);
+        // console.log('login - step5AuthData:', step5AuthData);
         const url = `${baseUrl}?${qs.stringify(step5AuthData)}`;
-        console.log('exchange - url:', url);
+        // console.log('exchange - url:', url);
         this.oauth2Token = undefined;
         const response = await this.post<IOauth2Token>(url, null, {
             headers: {
@@ -347,9 +347,9 @@ export class HttpClient {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
-        console.log('exchange - response:', response);
+        // console.log('exchange - response:', response);
         this.oauth2Token = this.setOauth2TokenExpiresAt(response);
-        console.log('exchange - oauth2Token:', this.oauth2Token);
+        // console.log('exchange - oauth2Token:', this.oauth2Token);
     }
 
     setOauth2TokenExpiresAt(token: IOauth2Token): IOauth2Token {
