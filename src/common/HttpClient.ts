@@ -1,25 +1,22 @@
 import axios, {
-    AxiosError,
-    AxiosHeaders,
     AxiosInstance,
     AxiosRequestConfig,
     AxiosResponse,
     RawAxiosRequestHeaders
 } from 'axios';
+import FormData from 'form-data';
+import _ from 'lodash';
+import { DateTime } from 'luxon';
+import OAuth from 'oauth-1.0a';
+import qs from 'qs';
+import { UrlClass } from '../garmin/UrlClass';
 import {
-    GarminDomain,
     IOauth1,
     IOauth1Consumer,
     IOauth1Token,
     IOauth2Token
 } from '../garmin/types';
-import { UrlClass } from '../garmin/UrlClass';
-import _ from 'lodash';
-import OAuth from 'oauth-1.0a';
-import FormData from 'form-data';
-import qs from 'qs';
 const crypto = require('crypto');
-import { DateTime } from 'luxon';
 
 const CSRF_RE = new RegExp('name="_csrf"\\s+value="(.+?)"');
 const TICKET_RE = new RegExp('ticket=([^"]+)"');
@@ -240,9 +237,11 @@ export class HttpClient {
         const ticketRegResult = TICKET_RE.exec(step3Result);
         if (!ticketRegResult) {
             throw new Error(
-                'login failed (Ticket not found), please check username and password'
+                'login failed (Ticket not found or MFA), please check username and password'
             );
         }
+        const ticket = ticketRegResult[1];
+        return ticket;
     }
 
     // TODO: Handle MFA
