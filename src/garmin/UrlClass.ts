@@ -1,4 +1,3 @@
-import { UPLOAD_SERVICE } from './Urls';
 import { GarminDomain } from './types';
 
 export class UrlClass {
