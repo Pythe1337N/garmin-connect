@@ -1,6 +1,6 @@
 {
     "name": "garmin-connect",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "Makes it simple to interface with Garmin Connect to get or set any data point",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
