@@ -7,12 +7,21 @@ TODO:
 -   [x] New HttpClient class
 -   [x] Login and get user token
 -   [x] Garmin URLs works with `garmin.cn` and `garmin.com`
--   [ ] Handle MFA
 -   [x] Auto refresh Ouath2 token
 -   [x] Oauth1,Oauth2 token import and export.
--   [ ] Replace new urls of Activity,Profile,Gear etc.
 -   [x] Download Activity, countActivities, getActivities, getActivity, getUserProfile, getUserSettings
--   [ ] Upload Activity (2023-10-02 Garmin upload service is down. See https://connect.garmin.com/status/)
+-   [x] Upload Activity, delete Activity
+-   [ ] Implementation of other methods, such as Badge,Workout,Gear etc
+-   [ ] Handle MFA
+-   [ ] Unit test
+
+If something is not working, please check [https://connect.garmin.com/status/](https://connect.garmin.com/status/) first.
+
+Currently, most of previous features are working, but some of Rest API are not added, such as `Gear`,`Workout`,`Badge` etc. So if you need these features, please add a PR.
+
+All of above work inspired by [https://github.com/matin/garth](https://github.com/matin/garth). Many thanks.
+
+---
 
 A powerful JavaScript library for connecting to Garmin Connect for sending and receiving health and workout data. It comes with some predefined methods to get and set different kinds of data for your Garmin account, but also have the possibility to make [custom requests](#custom-requests) `GET`, `POST` and `PUT` are currently supported. This makes it easy to implement whatever may be missing to suite your needs.
 
