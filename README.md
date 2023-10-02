@@ -13,6 +13,7 @@ TODO:
 -   [x] Upload Activity, delete Activity
 -   [ ] Implementation of other methods, such as Badge,Workout,Gear etc
 -   [ ] Handle MFA
+-   [x] Handle Account locked
 -   [ ] Unit test
 
 If something is not working, please check [https://connect.garmin.com/status/](https://connect.garmin.com/status/) first.

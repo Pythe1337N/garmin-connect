@@ -23,6 +23,8 @@ import { DateTime } from 'luxon';
 
 const CSRF_RE = new RegExp('name="_csrf"\\s+value="(.+?)"');
 const TICKET_RE = new RegExp('ticket=([^"]+)"');
+const ACCOUNT_LOCKED_RE = new RegExp('var statuss*=s*"([^"]*)"');
+
 const USER_AGENT_CONNECTMOBILE = 'com.garmin.android.apps.connectmobile';
 const USER_AGENT_BROWSER =
     'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
@@ -47,8 +49,12 @@ export class HttpClient {
             (response) => response,
             async (error) => {
                 const originalRequest = error.config;
+                // console.log('originalRequest:', originalRequest)
                 // Auto Refresh token
                 if (error.response.status === 401 && !originalRequest._retry) {
+                    if (!this.oauth2Token) {
+                        return;
+                    }
                     if (isRefreshing) {
                         try {
                             const token = await new Promise<string>(
@@ -68,9 +74,9 @@ export class HttpClient {
 
                     originalRequest._retry = true;
                     isRefreshing = true;
-                    console.log('interceptors: refreshOauth2Toekn start');
-                    await this.refreshOauth2Toekn();
-                    console.log('interceptors: refreshOauth2Toekn end');
+                    console.log('interceptors: refreshOauth2Token start');
+                    await this.refreshOauth2Token();
+                    console.log('interceptors: refreshOauth2Token end');
                     isRefreshing = false;
                     refreshSubscribers.forEach((subscriber) =>
                         subscriber(this.oauth2Token!.access_token)
@@ -108,7 +114,7 @@ export class HttpClient {
         if (this.oauth2Token) {
             if (this.oauth2Token.expires_at < DateTime.now().toSeconds()) {
                 console.error('Token expired!');
-                await this.refreshOauth2Toekn();
+                await this.refreshOauth2Token();
             }
         }
     }
@@ -227,16 +233,29 @@ export class HttpClient {
                 'User-Agent': USER_AGENT_BROWSER
             }
         });
+        // console.log('step3Result:', step3Result)
+        this.handleAccountLocked(step3Result);
 
         const ticketRegResult = TICKET_RE.exec(step3Result);
         if (!ticketRegResult) {
-            throw new Error('login - ticket not found');
+            throw new Error(
+                'login failed (Ticket not found), please check username and password'
+            );
         }
-        const ticket = ticketRegResult[1];
-        return ticket;
     }
 
-    async refreshOauth2Toekn() {
+    handleAccountLocked(htmlStr: string): void {
+        const accountLockedRegResult = ACCOUNT_LOCKED_RE.exec(htmlStr);
+        if (accountLockedRegResult) {
+            const msg = accountLockedRegResult[1];
+            console.error(msg);
+            throw new Error(
+                'login failed (AccountLocked), please open connect web page to unlock your account'
+            );
+        }
+    }
+
+    async refreshOauth2Token() {
         if (!this.oauth2Token || !this.oauth1Token || !this.OAUTH_CONSUMER) {
             throw new Error('No Oauth2Token or Oauth1Token or OAUTH_CONSUMER');
         }
