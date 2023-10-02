@@ -21,10 +21,11 @@ const crypto = require('crypto');
 const CSRF_RE = new RegExp('name="_csrf"\\s+value="(.+?)"');
 const TICKET_RE = new RegExp('ticket=([^"]+)"');
 const ACCOUNT_LOCKED_RE = new RegExp('var statuss*=s*"([^"]*)"');
+const PAGE_TITLE_RE = new RegExp('<title>([^<]*)</title>');
 
 const USER_AGENT_CONNECTMOBILE = 'com.garmin.android.apps.connectmobile';
 const USER_AGENT_BROWSER =
-    'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36';
 
 const OAUTH_CONSUMER_URL =
     'https://thegarth.s3.amazonaws.com/oauth_consumer.json';
@@ -232,6 +233,7 @@ export class HttpClient {
         });
         // console.log('step3Result:', step3Result)
         this.handleAccountLocked(step3Result);
+        this.handlePageTitle(step3Result);
         this.handleMFA(step3Result);
 
         const ticketRegResult = TICKET_RE.exec(step3Result);
@@ -246,6 +248,22 @@ export class HttpClient {
 
     // TODO: Handle MFA
     handleMFA(htmlStr: string): void {}
+
+    // TODO: Handle Phone number
+    handlePageTitle(htmlStr: string): void {
+        const pageTitileRegResult = PAGE_TITLE_RE.exec(htmlStr);
+        if (pageTitileRegResult) {
+            const title = pageTitileRegResult[1];
+            console.log('login page title:', title);
+            if (_.includes(title, 'Update Phone Number')) {
+                // current I don't know where to update it
+                // See:  https://github.com/matin/garth/issues/19
+                throw new Error(
+                    "login failed (Update Phone number), please update your phone number, currently I don't know where to update it"
+                );
+            }
+        }
+    }
 
     handleAccountLocked(htmlStr: string): void {
         const accountLockedRegResult = ACCOUNT_LOCKED_RE.exec(htmlStr);
