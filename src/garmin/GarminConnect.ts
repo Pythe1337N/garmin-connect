@@ -14,6 +14,7 @@ import {
     GarminDomain,
     IActivity,
     ICountActivities,
+    IGarminTokens,
     IOauth1Token,
     IOauth2Token,
     ISocialProfile,
@@ -112,6 +113,15 @@ export default class GarminConnect {
         ) as unknown as string;
         const oauth2 = JSON.parse(oauth2Data);
         this.client.oauth2Token = oauth2;
+    }
+    exportToken(): IGarminTokens {
+        if (!this.client.oauth1Token || !this.client.oauth2Token) {
+            throw new Error('exportToken: Token not found');
+        }
+        return {
+            oauth1: this.client.oauth1Token,
+            oauth2: this.client.oauth2Token
+        };
     }
     // from db or localstorage etc
     loadToken(oauth1: IOauth1Token, oauth2: IOauth2Token): void {

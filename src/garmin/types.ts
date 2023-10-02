@@ -614,6 +614,10 @@ export interface IOauth1 {
     oauth: OAuth;
 }
 
+export interface IGarminTokens {
+    oauth1: IOauth1Token;
+    oauth2: IOauth2Token;
+}
 export interface IOauth1Token {
     oauth_token: string;
     oauth_token_secret: string;
