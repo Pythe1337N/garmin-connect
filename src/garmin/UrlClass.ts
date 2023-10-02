@@ -58,6 +58,9 @@ export class UrlClass {
         return `${this.GC_API}/download-service/export/kml/activity/`;
     }
     get UPLOAD() {
-        return `${this.BASE_URL}/upload-service/upload/`;
+        return `${this.GC_API}/upload-service/upload/`;
+    }
+    get IMPORT_DATA() {
+        return `${this.GC_API}/modern/import-data`;
     }
 }

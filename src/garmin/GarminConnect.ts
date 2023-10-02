@@ -196,10 +196,6 @@ export default class GarminConnect {
         format: UploadFileTypeTypeValue = 'fit'
     ) {
         const detectedFormat = (format || path.extname(file))?.toLowerCase();
-        console.log('uploadActivity - detectedFormat:', detectedFormat);
-        const filename = path.basename(file);
-        console.log('uploadActivity - filename:', filename);
-
         if (!_.includes(UploadFileType, detectedFormat)) {
             throw new Error('uploadActivity - Invalid format: ' + format);
         }
@@ -212,12 +208,25 @@ export default class GarminConnect {
             form,
             {
                 headers: {
-                    ...form.getHeaders()
+                    'Content-Type': form.getHeaders()['content-type']
                 }
             }
         );
-        // TODO: FIX THIS. GARMIN Activity Uploads service is down
-        // https://connect.garmin.com/status/
         return response;
+    }
+
+    async deleteActivity(activity: {
+        activityId: GCActivityId;
+    }): Promise<void> {
+        if (!activity.activityId) throw new Error('Missing activityId');
+        await this.client.post<void>(
+            this.url.ACTIVITY + activity.activityId,
+            null,
+            {
+                headers: {
+                    'X-Http-Method-Override': 'DELETE'
+                }
+            }
+        );
     }
 }
