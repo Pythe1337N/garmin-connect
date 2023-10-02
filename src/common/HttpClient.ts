@@ -235,6 +235,7 @@ export class HttpClient {
         });
         // console.log('step3Result:', step3Result)
         this.handleAccountLocked(step3Result);
+        this.handleMFA(step3Result);
 
         const ticketRegResult = TICKET_RE.exec(step3Result);
         if (!ticketRegResult) {
@@ -243,6 +244,9 @@ export class HttpClient {
             );
         }
     }
+
+    // TODO: Handle MFA
+    handleMFA(htmlStr: string): void {}
 
     handleAccountLocked(htmlStr: string): void {
         const accountLockedRegResult = ACCOUNT_LOCKED_RE.exec(htmlStr);
