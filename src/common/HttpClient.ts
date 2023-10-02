@@ -27,11 +27,8 @@ const USER_AGENT_CONNECTMOBILE = 'com.garmin.android.apps.connectmobile';
 const USER_AGENT_BROWSER =
     'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
 
-const OAUTH_CONSUMER = {
-    key: 'REPLACE_ME',
-    secret: 'REPLACE_ME'
-};
-
+const OAUTH_CONSUMER_URL =
+    'https://thegarth.s3.amazonaws.com/oauth_consumer.json';
 //  refresh token
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
@@ -41,6 +38,7 @@ export class HttpClient {
     url: UrlClass;
     oauth1Token: IOauth1Token | undefined;
     oauth2Token: IOauth2Token | undefined;
+    OAUTH_CONSUMER: IOauth1Consumer | undefined;
 
     constructor(url: UrlClass) {
         this.url = url;
@@ -98,6 +96,14 @@ export class HttpClient {
         });
     }
 
+    async fetchOauthConsumer() {
+        const response = await axios.get(OAUTH_CONSUMER_URL);
+        this.OAUTH_CONSUMER = {
+            key: response.data.consumer_key,
+            secret: response.data.consumer_secret
+        };
+    }
+
     async checkTokenVaild() {
         if (this.oauth2Token) {
             if (this.oauth2Token.expires_at < DateTime.now().toSeconds()) {
@@ -147,6 +153,7 @@ export class HttpClient {
      * @returns {Promise<HttpClient>}
      */
     async login(username: string, password: string): Promise<HttpClient> {
+        await this.fetchOauthConsumer();
         // Step1-3: Get ticket from page.
         const ticket = await this.getLoginTicket(username, password);
         // Step4: Oauth1
@@ -230,11 +237,11 @@ export class HttpClient {
     }
 
     async refreshOauth2Toekn() {
-        if (!this.oauth2Token || !this.oauth1Token) {
-            throw new Error('No Oauth2Token or Oauth1Token');
+        if (!this.oauth2Token || !this.oauth1Token || !this.OAUTH_CONSUMER) {
+            throw new Error('No Oauth2Token or Oauth1Token or OAUTH_CONSUMER');
         }
         const oauth1 = {
-            oauth: this.getOauthClient(OAUTH_CONSUMER),
+            oauth: this.getOauthClient(this.OAUTH_CONSUMER),
             token: this.oauth1Token
         };
         await this.exchange(oauth1);
@@ -242,6 +249,9 @@ export class HttpClient {
     }
 
     async getOauth1Token(ticket: string): Promise<IOauth1> {
+        if (!this.OAUTH_CONSUMER) {
+            throw new Error('No OAUTH_CONSUMER');
+        }
         const params = {
             ticket,
             'login-url': this.url.GARMIN_SSO_EMBED,
@@ -251,7 +261,7 @@ export class HttpClient {
             params
         )}`;
 
-        const oauth = this.getOauthClient(OAUTH_CONSUMER);
+        const oauth = this.getOauthClient(this.OAUTH_CONSUMER);
 
         const step4RequestData = {
             url: url,
