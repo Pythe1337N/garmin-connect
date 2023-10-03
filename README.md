@@ -58,7 +58,7 @@ await GCClient.login();
 const userProfile = await GCClient.getUserProfile();
 ```
 
-Now you can check `userProfile.userName` (userName is your email address) to verify that your login was successful.
+Now you can check `userProfile.userName` to verify that your login was successful.
 
 ## Reusing your session(since v1.6.0)
 
