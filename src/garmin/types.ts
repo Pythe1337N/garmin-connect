@@ -727,3 +727,126 @@ export interface ICountActivities {
         all: Record<string, any>;
     };
 }
+
+// Workouts
+
+export interface IWorkout {
+    workoutId?: number;
+    ownerId?: number;
+    workoutName: string;
+    description?: string;
+    updateDate: Date;
+    createdDate: Date;
+    sportType: ISportType;
+    trainingPlanId: null;
+    author: IAuthor;
+    estimatedDurationInSecs: number;
+    estimatedDistanceInMeters: null;
+    estimateType: null;
+    estimatedDistanceUnit: IUnit;
+    poolLength: number;
+    poolLengthUnit: IUnit;
+    workoutProvider: string;
+    workoutSourceId: string;
+    consumer: null;
+    atpPlanId: null;
+    workoutNameI18nKey: null;
+    descriptionI18nKey: null;
+    shared: boolean;
+    estimated: boolean;
+}
+
+export interface IWorkoutDetail extends IWorkout {
+    workoutSegments: IWorkoutSegment[];
+}
+export interface IAuthor {
+    userProfilePk: null;
+    displayName: null;
+    fullName: null;
+    profileImgNameLarge: null;
+    profileImgNameMedium: null;
+    profileImgNameSmall: null;
+    userPro: boolean;
+    vivokidUser: boolean;
+}
+
+export interface IUnit {
+    unitId: null;
+    unitKey: null;
+    factor: null;
+}
+
+export interface ISportType {
+    sportTypeId: number;
+    sportTypeKey: string;
+    displayOrder?: number;
+}
+
+export interface IWorkoutSegment {
+    segmentOrder: number;
+    sportType: ISportType;
+    workoutSteps: IWorkoutStep[];
+}
+
+export interface IWorkoutStep {
+    type: string;
+    stepId: number;
+    stepOrder: number;
+    stepType: IStepType;
+    childStepId: null;
+    description: null;
+    endCondition: IEndCondition;
+    endConditionValue: number | null;
+    preferredEndConditionUnit: IUnit | null;
+    endConditionCompare: null;
+    targetType: ITargetType;
+    targetValueOne: null;
+    targetValueTwo: null;
+    targetValueUnit: null;
+    zoneNumber: null;
+    secondaryTargetType: null;
+    secondaryTargetValueOne: null;
+    secondaryTargetValueTwo: null;
+    secondaryTargetValueUnit: null;
+    secondaryZoneNumber: null;
+    endConditionZone: null;
+    strokeType: IStrokeType;
+    equipmentType: IEquipmentType;
+    category: null;
+    exerciseName: null;
+    workoutProvider: null;
+    providerExerciseSourceId: null;
+    weightValue: null;
+    weightUnit: null;
+}
+
+export interface IEndCondition {
+    conditionTypeId: number;
+    conditionTypeKey: string;
+    displayOrder: number;
+    displayable: boolean;
+}
+
+export interface IEquipmentType {
+    equipmentTypeId: number;
+    equipmentTypeKey: null;
+    displayOrder: number;
+}
+
+export interface IStepType {
+    stepTypeId: number;
+    stepTypeKey: string;
+    displayOrder: number;
+}
+
+export interface IStrokeType {
+    strokeTypeId: number;
+    strokeTypeKey: null;
+    displayOrder: number;
+}
+
+export interface ITargetType {
+    workoutTargetTypeId: number;
+    workoutTargetTypeKey: string;
+    displayOrder: number;
+}

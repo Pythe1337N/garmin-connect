@@ -1,6 +1,7 @@
 import appRoot from 'app-root-path';
 
 import FormData from 'form-data';
+import _ from 'lodash';
 import { DateTime } from 'luxon';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -19,10 +20,12 @@ import {
     IOauth2Token,
     ISocialProfile,
     IUserSettings,
+    IWorkout,
+    IWorkoutDetail,
     UploadFileType,
     UploadFileTypeTypeValue
 } from './types';
-import _ from 'lodash';
+import Running from './workouts/Running';
 
 let config: GCCredentials | undefined = undefined;
 
@@ -213,7 +216,7 @@ export default class GarminConnect {
         const fileBuffer = fs.createReadStream(file);
         const form = new FormData();
         form.append('userfile', fileBuffer);
-        const response = this.client.post(
+        const response = await this.client.post(
             this.url.UPLOAD + '.' + format,
             form,
             {
@@ -229,14 +232,72 @@ export default class GarminConnect {
         activityId: GCActivityId;
     }): Promise<void> {
         if (!activity.activityId) throw new Error('Missing activityId');
-        await this.client.post<void>(
-            this.url.ACTIVITY + activity.activityId,
-            null,
-            {
-                headers: {
-                    'X-Http-Method-Override': 'DELETE'
-                }
+        await this.client.delete<void>(this.url.ACTIVITY + activity.activityId);
+    }
+
+    async getWorkouts(start: number, limit: number): Promise<IWorkout[]> {
+        return this.client.get<IWorkout[]>(this.url.WORKOUTS, {
+            params: {
+                start,
+                limit
             }
+        });
+    }
+    async getWorkoutDetail(workout: {
+        workoutId: string;
+    }): Promise<IWorkoutDetail> {
+        if (!workout.workoutId) throw new Error('Missing workoutId');
+        return this.client.get<IWorkoutDetail>(
+            this.url.WORKOUT(workout.workoutId)
         );
+    }
+
+    async addWorkout(
+        workout: IWorkoutDetail | Running
+    ): Promise<IWorkoutDetail> {
+        if (!workout) throw new Error('Missing workout');
+
+        if (workout instanceof Running) {
+            if (workout.isValid()) {
+                const data = { ...workout.toJson() };
+                if (!data.description) {
+                    data.description = 'Added by garmin-connect for Node.js';
+                }
+                return this.client.post<IWorkoutDetail>(
+                    this.url.WORKOUT(),
+                    data
+                );
+            }
+        }
+
+        const newWorkout = _.omit(workout, [
+            'workoutId',
+            'ownerId',
+            'updatedDate',
+            'createdDate',
+            'author'
+        ]);
+        if (!newWorkout.description) {
+            newWorkout.description = 'Added by garmin-connect for Node.js';
+        }
+        // console.log('addWorkout - newWorkout:', newWorkout)
+        return this.client.post<IWorkoutDetail>(this.url.WORKOUT(), newWorkout);
+    }
+
+    async addRunningWorkout(
+        name: string,
+        meters: number,
+        description: string
+    ): Promise<IWorkoutDetail> {
+        const running = new Running();
+        running.name = name;
+        running.distance = meters;
+        running.description = description;
+        return this.addWorkout(running);
+    }
+
+    async deleteWorkout(workout: { workoutId: string }) {
+        if (!workout.workoutId) throw new Error('Missing workout');
+        return this.client.delete(this.url.WORKOUT(workout.workoutId));
     }
 }

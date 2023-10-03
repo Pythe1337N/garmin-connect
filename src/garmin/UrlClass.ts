@@ -1,4 +1,4 @@
-import { GarminDomain } from './types';
+import { GCWorkoutId, GarminDomain } from './types';
 
 export class UrlClass {
     private domain: GarminDomain;
@@ -61,5 +61,14 @@ export class UrlClass {
     }
     get IMPORT_DATA() {
         return `${this.GC_API}/modern/import-data`;
+    }
+    WORKOUT(id?: GCWorkoutId) {
+        if (id) {
+            return `${this.GC_API}/workout-service/workout/${id}`;
+        }
+        return `${this.GC_API}/workout-service/workout`;
+    }
+    get WORKOUTS() {
+        return `${this.GC_API}/workout-service/workouts`;
     }
 }
