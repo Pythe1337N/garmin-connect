@@ -49,7 +49,10 @@ export class HttpClient {
                 const originalRequest = error.config;
                 // console.log('originalRequest:', originalRequest)
                 // Auto Refresh token
-                if (error.response.status === 401 && !originalRequest._retry) {
+                if (
+                    error?.response?.status === 401 &&
+                    !originalRequest?._retry
+                ) {
                     if (!this.oauth2Token) {
                         return;
                     }
