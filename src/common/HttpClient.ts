@@ -134,6 +134,17 @@ export class HttpClient {
         return response?.data;
     }
 
+    async delete<T>(url: string, config?: AxiosRequestConfig<any>): Promise<T> {
+        const response = await this.client.post<T>(url, null, {
+            ...config,
+            headers: {
+                ...config?.headers,
+                'X-Http-Method-Override': 'DELETE'
+            }
+        });
+        return response?.data;
+    }
+
     setCommonHeader(headers: RawAxiosRequestHeaders): void {
         _.each(headers, (headerValue, key) => {
             this.client.defaults.headers.common[key] = headerValue;
