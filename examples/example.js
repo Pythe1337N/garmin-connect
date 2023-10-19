@@ -1,4 +1,4 @@
-const { GarminConnect } = require('../dist/index');
+const { GarminConnect } = require('garmin-connect');
 
 // Has to be run in an async function to be able to use the await keyword
 const main = async () => {
