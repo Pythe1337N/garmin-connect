@@ -1,5 +1,30 @@
 # garmin-connect
 
+## v1.6.0 refactor
+
+TODO:
+
+-   [x] New HttpClient class
+-   [x] Login and get user token
+-   [x] Garmin URLs works with `garmin.cn` and `garmin.com`
+-   [x] Auto refresh Ouath2 token
+-   [x] Oauth1,Oauth2 token import and export.
+-   [x] Download Activity, countActivities, getActivities, getActivity, getUserProfile, getUserSettings
+-   [x] Upload Activity, delete Activity
+-   [ ] Implementation of other methods, such as Badge,Workout,Gear etc
+-   [ ] Handle MFA
+-   [x] Handle Account locked
+-   [ ] Unit test
+-   [ ] Listeners
+
+If something is not working, please check [https://connect.garmin.com/status/](https://connect.garmin.com/status/) first.
+
+Currently, most of previous features are working, but some of Rest API are not added, such as `Gear`,`Workout`,`Badge` etc. So if you need these features, please add a PR.
+
+All of above work inspired by [https://github.com/matin/garth](https://github.com/matin/garth). Many thanks.
+
+---
+
 A powerful JavaScript library for connecting to Garmin Connect for sending and receiving health and workout data. It comes with some predefined methods to get and set different kinds of data for your Garmin account, but also have the possibility to make [custom requests](#custom-requests) `GET`, `POST` and `PUT` are currently supported. This makes it easy to implement whatever may be missing to suite your needs.
 
 ## Prerequisites
@@ -24,15 +49,54 @@ $ npm install garmin-connect
 ```js
 const { GarminConnect } = require('garmin-connect');
 // Create a new Garmin Connect Client
-const GCClient = new GarminConnect({"username": "my.email@example.com", "password": "MySecretPassword"});
+const GCClient = new GarminConnect({
+    username: 'my.email@example.com',
+    password: 'MySecretPassword'
+});
 // Uses credentials from garmin.config.json or uses supplied params
 await GCClient.login();
-const userInfo = await GCClient.getUserInfo();
+const userProfile = await GCClient.getUserProfile();
 ```
 
-Now you can check `userInfo.emailAddress` to verify that your login was successful.
+Now you can check `userProfile.userName` to verify that your login was successful.
 
-## Reusing your session
+## Reusing your session(since v1.6.0)
+
+### Save token to file and reuse it.
+
+```js
+GCClient.saveTokenToFile('/path/to/save/tokens');
+```
+
+Result:
+
+```bash
+$ ls /path/to/save/tokens
+oauth1_token.json oauth2_token.json
+```
+
+Reuse token:
+
+```js
+GCClient.loadTokenByFile('/path/to/save/tokens');
+```
+
+### Or just save your token to db or other storage.
+
+```js
+const oauth1 = GCClient.client.oauth1Token;
+const oauth2 = GCClient.client.oauth2Token;
+// save to db or other storage
+...
+```
+
+Reuse token:
+
+```js
+GCClient.loadToken(oauth1, oauth2);
+```
+
+## Reusing your session(depreated)
 
 This is an experimental feature and might not yet provide full stability.
 
@@ -360,4 +424,3 @@ For now, this library only supports the following:
 -   Get earned badges
 -   Get available badges
 -   Get details about one specific badge
-
