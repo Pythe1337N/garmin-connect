@@ -850,3 +850,12 @@ export interface ITargetType {
     workoutTargetTypeKey: string;
     displayOrder: number;
 }
+
+// IDailySummary
+
+export interface IDailyStepsType {
+    calendarDate: string;
+    stepGoal: number;
+    totalDistance: number;
+    totalSteps: number;
+}

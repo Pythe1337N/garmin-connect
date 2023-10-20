@@ -62,6 +62,9 @@ export class UrlClass {
     get IMPORT_DATA() {
         return `${this.GC_API}/modern/import-data`;
     }
+    get DAILY_STEPS() {
+        return `${this.GC_API}/usersummary-service/stats/steps/daily/`;
+    }
     WORKOUT(id?: GCWorkoutId) {
         if (id) {
             return `${this.GC_API}/workout-service/workout/${id}`;
