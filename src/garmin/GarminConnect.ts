@@ -15,6 +15,7 @@ import {
     GarminDomain,
     IActivity,
     ICountActivities,
+    IDailyStepsType,
     IGarminTokens,
     IOauth1Token,
     IOauth2Token,
@@ -26,6 +27,7 @@ import {
     UploadFileTypeTypeValue
 } from './types';
 import Running from './workouts/Running';
+import { toDateString } from './common/DateUtils';
 
 let config: GCCredentials | undefined = undefined;
 
@@ -299,5 +301,22 @@ export default class GarminConnect {
     async deleteWorkout(workout: { workoutId: string }) {
         if (!workout.workoutId) throw new Error('Missing workout');
         return this.client.delete(this.url.WORKOUT(workout.workoutId));
+    }
+
+    async getSteps(date = new Date()): Promise<number> {
+        const dateString = toDateString(date);
+
+        const days = await this.client.get<IDailyStepsType[]>(
+            `${this.url.DAILY_STEPS}${dateString}/${dateString}`
+        );
+        const dayStats = days.find(
+            ({ calendarDate }) => calendarDate === dateString
+        );
+
+        if (!dayStats) {
+            throw new Error("Can't find daily steps for this date.");
+        }
+
+        return dayStats.totalSteps;
     }
 }
