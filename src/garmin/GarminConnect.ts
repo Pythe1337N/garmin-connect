@@ -319,4 +319,14 @@ export default class GarminConnect {
 
         return dayStats.totalSteps;
     }
+
+    async get<T>(url: string, data?: any) {
+        const response = await this.client.get(url, data);
+        return response as T;
+    }
+
+    async post<T>(url: string, data: any) {
+        const response = await this.client.post<T>(url, data, {});
+        return response as T;
+    }
 }
