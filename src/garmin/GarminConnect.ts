@@ -23,12 +23,13 @@ import {
     IUserSettings,
     IWorkout,
     IWorkoutDetail,
-    SleepData,
     UploadFileType,
     UploadFileTypeTypeValue
-} from './types';
+} from './types/types';
 import Running from './workouts/Running';
 import { toDateString } from './common/DateUtils';
+import { SleepData } from './types/sleep';
+import { gramsToPounds } from './common/WeightUtils';
 
 let config: GCCredentials | undefined = undefined;
 
@@ -322,36 +323,98 @@ export default class GarminConnect {
     }
 
     async getSleepData(date = new Date()): Promise<SleepData> {
-        const dateString = toDateString(date);
+        try {
+            const dateString = toDateString(date);
 
-        const sleepData = await this.client.get<SleepData>(
-            `${this.url.DAILY_SLEEP}?date=${dateString}`
-        );
-        return sleepData;
+            const sleepData = await this.client.get<SleepData>(
+                `${this.url.DAILY_SLEEP}?date=${dateString}`
+            );
+
+            if (!sleepData) {
+                throw new Error('Invalid or empty sleep data response.');
+            }
+
+            // Add more specific checks if needed based on the structure of your SleepData type
+
+            return sleepData;
+        } catch (error: any) {
+            // Handle network errors, HTTP errors, or unexpected issues
+            throw new Error(`Error in getSleepData: ${error.message}`);
+        }
     }
 
     async getSleepDuration(
         date = new Date()
     ): Promise<{ hours: number; minutes: number }> {
-        const sleepData = await this.getSleepData(date);
+        try {
+            const sleepData = await this.getSleepData(date);
 
-        const sleepStartTimestampGMT =
-            sleepData.dailySleepDTO.sleepStartTimestampGMT;
-        const sleepEndTimestampGMT =
-            sleepData.dailySleepDTO.sleepEndTimestampGMT;
+            if (
+                !sleepData ||
+                !sleepData.dailySleepDTO ||
+                sleepData.dailySleepDTO.sleepStartTimestampGMT === undefined ||
+                sleepData.dailySleepDTO.sleepEndTimestampGMT === undefined
+            ) {
+                throw new Error(
+                    'Invalid or missing sleep data for the specified date.'
+                );
+            }
 
-        // Calculate time difference in seconds
-        const timeDifferenceInSeconds =
-            (sleepEndTimestampGMT - sleepStartTimestampGMT) / 1000;
+            const sleepStartTimestampGMT =
+                sleepData.dailySleepDTO.sleepStartTimestampGMT;
+            const sleepEndTimestampGMT =
+                sleepData.dailySleepDTO.sleepEndTimestampGMT;
 
-        // Convert time difference to hours and minutes
-        const hours = Math.floor(timeDifferenceInSeconds / 3600);
-        const minutes = Math.floor((timeDifferenceInSeconds % 3600) / 60);
+            // Calculate time difference in seconds
+            const timeDifferenceInSeconds =
+                (sleepEndTimestampGMT - sleepStartTimestampGMT) / 1000;
 
-        return {
-            hours,
-            minutes
-        };
+            // Convert time difference to hours and minutes
+            const hours = Math.floor(timeDifferenceInSeconds / 3600);
+            const minutes = Math.floor((timeDifferenceInSeconds % 3600) / 60);
+
+            return {
+                hours,
+                minutes
+            };
+        } catch (error: any) {
+            // Handle any other errors that might occur during the process
+            throw new Error(`Error in getSleepDuration: ${error.message}`);
+        }
+    }
+
+    async getDailyWeightData(date = new Date()): Promise<WeightData> {
+        try {
+            const dateString = toDateString(date);
+            console.log(`${this.url.DAILY_WEIGHT}/${dateString}`);
+            const weightData = await this.client.get<WeightData>(
+                `${this.url.DAILY_WEIGHT}/${dateString}`
+            );
+
+            if (!weightData) {
+                throw new Error('Invalid or empty weight data response.');
+            }
+
+            // Add more specific checks if needed based on the structure of your WeightData type
+
+            return weightData;
+        } catch (error: any) {
+            // Handle network errors, HTTP errors, or unexpected issues
+            throw new Error(`Error in getDailyWeightData: ${error.message}`);
+        }
+    }
+
+    async getDailyWeight(date = new Date()): Promise<number> {
+        const weightData = await this.getDailyWeightData(date);
+
+        if (
+            weightData.totalAverage &&
+            typeof weightData.totalAverage.weight === 'number'
+        ) {
+            return gramsToPounds(weightData.totalAverage.weight);
+        } else {
+            throw new Error("Can't find valid daily weight for this date.");
+        }
     }
 
     async get<T>(url: string, data?: any) {

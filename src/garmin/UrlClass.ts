@@ -1,4 +1,4 @@
-import { GCWorkoutId, GarminDomain } from './types';
+import { GCWorkoutId, GarminDomain } from './types/types';
 
 export class UrlClass {
     private domain: GarminDomain;
@@ -67,6 +67,9 @@ export class UrlClass {
     }
     get DAILY_SLEEP() {
         return `${this.GC_API}/sleep-service/sleep/dailySleepData`;
+    }
+    get DAILY_WEIGHT() {
+        return `${this.GC_API}/weight-service/weight/dayview`;
     }
     WORKOUT(id?: GCWorkoutId) {
         if (id) {

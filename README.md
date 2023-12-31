@@ -96,7 +96,7 @@ Reuse token:
 GCClient.loadToken(oauth1, oauth2);
 ```
 
-## Reusing your session(depreated)
+## Reusing your session(deprecated)
 
 This is an experimental feature and might not yet provide full stability.
 
@@ -342,6 +342,28 @@ Retrieves hours and minutes slept for a given date
 
 ```js
 const detailedSleep = await GCClient.getSleepDuration(new Date('2020-03-24'));
+```
+
+### `getDailyWeight(date?: Date): Promise<number>`
+
+Retrieves the daily weight and converts it from grams to pounds.
+
+#### Parameters:
+
+-   `date` (Date, optional): Date of information requested. Defaults to the current date.
+
+#### Returns:
+
+-   `Promise<number>`: A Promise that resolves to the daily weight converted from grams to pounds.
+
+#### Throws:
+
+-   `Error`: If valid daily weight data cannot be found for the specified date.
+
+#### Example:
+
+```js
+const weightInPounds = await instance.getDailyWeight(new Date('2023-12-25'));
 ```
 
 ## Modifying data
