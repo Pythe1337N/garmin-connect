@@ -65,6 +65,9 @@ export class UrlClass {
     get DAILY_STEPS() {
         return `${this.GC_API}/usersummary-service/stats/steps/daily/`;
     }
+    get DAILY_SLEEP() {
+        return `${this.GC_API}/sleep-service/sleep/dailySleepData`;
+    }
     WORKOUT(id?: GCWorkoutId) {
         if (id) {
             return `${this.GC_API}/workout-service/workout/${id}`;

@@ -23,6 +23,7 @@ import {
     IUserSettings,
     IWorkout,
     IWorkoutDetail,
+    SleepData,
     UploadFileType,
     UploadFileTypeTypeValue
 } from './types';
@@ -318,6 +319,39 @@ export default class GarminConnect {
         }
 
         return dayStats.totalSteps;
+    }
+
+    async getSleepData(date = new Date()): Promise<SleepData> {
+        const dateString = toDateString(date);
+
+        const sleepData = await this.client.get<SleepData>(
+            `${this.url.DAILY_SLEEP}?date=${dateString}`
+        );
+        return sleepData;
+    }
+
+    async getSleepDuration(
+        date = new Date()
+    ): Promise<{ hours: number; minutes: number }> {
+        const sleepData = await this.getSleepData(date);
+
+        const sleepStartTimestampGMT =
+            sleepData.dailySleepDTO.sleepStartTimestampGMT;
+        const sleepEndTimestampGMT =
+            sleepData.dailySleepDTO.sleepEndTimestampGMT;
+
+        // Calculate time difference in seconds
+        const timeDifferenceInSeconds =
+            (sleepEndTimestampGMT - sleepStartTimestampGMT) / 1000;
+
+        // Convert time difference to hours and minutes
+        const hours = Math.floor(timeDifferenceInSeconds / 3600);
+        const minutes = Math.floor((timeDifferenceInSeconds % 3600) / 60);
+
+        return {
+            hours,
+            minutes
+        };
     }
 
     async get<T>(url: string, data?: any) {

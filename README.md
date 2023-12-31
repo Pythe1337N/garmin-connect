@@ -148,7 +148,7 @@ There's currently no way of removing listeners.
 
 ## Reading data
 
-### User info
+### User info is not implemented yet. // TODO: Implement this function
 
 Receive basic user information
 
@@ -156,7 +156,7 @@ Receive basic user information
 GCClient.getUserInfo();
 ```
 
-### Social Profile
+### Social Profileis not implemented yet. // TODO: Implement this function
 
 Receive social user information
 
@@ -164,7 +164,7 @@ Receive social user information
 GCClient.getSocialProfile();
 ```
 
-### Social Connections
+### Social Connectionsis not implemented yet. // TODO: Implement this function
 
 Get a list of all social connections
 
@@ -172,7 +172,7 @@ Get a list of all social connections
 GCClient.getSocialConnections();
 ```
 
-### Device info
+### Device infois not implemented yet. // TODO: Implement this function
 
 Get a list of all registered devices including model numbers and firmware versions.
 
@@ -294,22 +294,54 @@ Get heart rate for a specific date.
 const heartRate = await GCClient.getHeartRate(new Date('2020-03-24'));
 ```
 
-### Sleep summary
+### `getSleepData(date: string): Promise<SleepData`
 
-Get the summary of how well you've slept for a specific date.
+Retrieves all sleep data for a given date
+
+#### Parameters:
+
+-   `date` (Date, optional): Date of information requested, this will default to today if no date is supplied
+
+#### Returns:
+
+-   `Promise<SleepData>`: A Promise that resolves to an object containing detailed sleep information.
+
+    -   `dailySleepDTO` (object): Information about the user's daily sleep.
+        -   `id` (number): The unique identifier of the sleep record.
+        -   `userProfilePK` (number): The user's profile identifier.
+        -   `calendarDate` (string): The date of the sleep record.
+        -   ...
+    -   `sleepMovement` (array): An array of sleep movement data.
+    -   `remSleepData` (boolean): Indicates whether REM sleep data is available.
+    -   `sleepLevels` (array): An array of sleep levels data.
+    -   `restlessMomentsCount` (number): Count of restless moments during sleep.
+    -   ...
+
+#### Example:
 
 ```js
-// This will default to today if no date is supplied
-const sleep = await GCClient.getSleep(new Date('2020-03-24'));
+const detailedSleep = await GCClient.getSleepDuration(new Date('2020-03-24'));
 ```
 
-### Detailed sleep data
+### `getSleepDuration(date: string): Promise<{hours: number, minutes: number}`
 
-Get the details of your sleep for a specific date.
+Retrieves hours and minutes slept for a given date
+
+#### Parameters:
+
+-   `date` (Date, optional): Date of information requested, this will default to today if no date is supplied
+
+#### Returns:
+
+-   `Promise<{hours: string, minutes: string }>`: A Promise that resolves to an object containing information about the sleep duration
+
+    -   `hours` (string): Number of hours
+    -   `minutes` (string): Number of minutes
+
+#### Example:
 
 ```js
-// This will default to today if no date is supplied
-const detailedSleep = await GCClient.getSleepData(new Date('2020-03-24'));
+const detailedSleep = await GCClient.getSleepDuration(new Date('2020-03-24'));
 ```
 
 ## Modifying data
