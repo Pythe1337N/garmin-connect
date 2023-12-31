@@ -307,15 +307,6 @@ Retrieves the total steps for a given date.
 const totalSteps = await GCClient.getSteps(new Date('2020-03-24'));
 ```
 
-### Heart rate
-
-Get heart rate for a specific date.
-
-```js
-// This will default to today if no date is supplied
-const heartRate = await GCClient.getHeartRate(new Date('2020-03-24'));
-```
-
 ### `getSleepData(date: string): Promise<SleepData>`
 
 Retrieves all sleep data for a given date
