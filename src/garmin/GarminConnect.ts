@@ -427,7 +427,6 @@ export default class GarminConnect {
 
             return convertMLToOunces(hydrationData.valueInML);
         } catch (error: any) {
-            // Handle network errors, HTTP errors, or unexpected issues
             throw new Error(`Error in getDailyHydration: ${error.message}`);
         }
     }
