@@ -454,6 +454,26 @@ const hydrationLogEntry = await GCClient.addHydrationLogOunces(
 );
 ```
 
+### `updateWeight(date = new Date(), lbs: number, timezone: string): Promise<UpdateWeight>`
+
+Updates weight information using the Weight Tracker API.
+
+#### Parameters:
+
+-   `date` (optional): Date object representing the weight entry date. Defaults to the current date if not provided.
+-   `lbs` (number): Weight value in pounds.
+-   `timezone` (string): String representing the timezone for the weight entry.
+
+#### Returns:
+
+-   `Promise<UpdateWeight>`: A Promise that resolves to the result of the weight update.
+
+#### Example:
+
+```js
+await GCClient.updateWeight(undefined, 202.9, 'America/Los_Angeles');
+```
+
 ### `getGolfSummary(): Promise<GolfSummary>`
 
 Retrieves a summary of golf scorecard data.

@@ -25,7 +25,11 @@ import {
     UploadFileTypeTypeValue
 } from './types';
 import Running from './workouts/Running';
-import { calculateTimeDifference, toDateString } from './common/DateUtils';
+import {
+    calculateTimeDifference,
+    getLocalTimestamp,
+    toDateString
+} from './common/DateUtils';
 import { SleepData } from './types/sleep';
 import { gramsToPounds } from './common/WeightUtils';
 import { convertMLToOunces, convertOuncesToML } from './common/HydrationUtils';
@@ -436,6 +440,28 @@ export default class GarminConnect {
         }
     }
 
+    async updateWeight(
+        date = new Date(),
+        lbs: number,
+        timezone: string
+    ): Promise<UpdateWeight> {
+        try {
+            const weightData = await this.client.post<UpdateWeight>(
+                `${this.url.UPDATE_WEIGHT}`,
+                {
+                    dateTimestamp: getLocalTimestamp(date, timezone),
+                    gmtTimestamp: date.toISOString().substring(0, 23),
+                    unitKey: 'lbs',
+                    value: lbs
+                }
+            );
+
+            return weightData;
+        } catch (error: any) {
+            throw new Error(`Error in updateWeight: ${error.message}`);
+        }
+    }
+
     async updateHydrationLogOunces(
         date = new Date(),
         valueInOz: number
@@ -448,7 +474,7 @@ export default class GarminConnect {
                     calendarDate: dateString,
                     valueInML: convertOuncesToML(valueInOz),
                     userProfileId: (await this.getUserProfile()).profileId,
-                    timestampLocal: new Date().toISOString().substring(0, 23)
+                    timestampLocal: date.toISOString().substring(0, 23)
                 }
             );
 

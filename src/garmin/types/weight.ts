@@ -38,3 +38,10 @@ interface WeightData {
     dateWeightList: DateWeight[];
     totalAverage: TotalAverage;
 }
+
+interface UpdateWeight {
+    dateTimestamp: string; // Format: "2023-12-31T12:39:00.00"
+    gmtTimestamp: string; // Format: "2023-12-31T20:39:00.00"
+    unitKey: string; // Example: "lbs"
+    value: number; // Example: 202.9
+}
