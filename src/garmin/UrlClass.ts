@@ -71,6 +71,9 @@ export class UrlClass {
     get DAILY_WEIGHT() {
         return `${this.GC_API}/weight-service/weight/dayview`;
     }
+    get DAILY_HYDRATION() {
+        return `${this.GC_API}/usersummary-service/usersummary/hydration/allData`;
+    }
     WORKOUT(id?: GCWorkoutId) {
         if (id) {
             return `${this.GC_API}/workout-service/workout/${id}`;

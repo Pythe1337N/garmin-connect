@@ -366,6 +366,30 @@ Retrieves the daily weight and converts it from grams to pounds.
 const weightInPounds = await GCClient.getDailyWeight(new Date('2023-12-25'));
 ```
 
+## `getDailyHydration(date?: Date): Promise<number>`
+
+Retrieves the daily hydration data and converts it from milliliters to ounces.
+
+### Parameters:
+
+-   `date` (Date, optional): Date of the requested information. Defaults to the current date.
+
+### Returns:
+
+-   `Promise<number>`: A Promise that resolves to the daily hydration data converted from milliliters to ounces.
+
+### Throws:
+
+-   `Error`: If valid daily hydration data cannot be found for the specified date or if the response is invalid.
+
+### Example:
+
+```js
+const hydrationInOunces = await GCClient.getDailyHydration(
+    new Date('2023-12-25')
+);
+```
+
 ## Modifying data
 
 ### Update activity

@@ -30,6 +30,7 @@ import Running from './workouts/Running';
 import { calculateTimeDifference, toDateString } from './common/DateUtils';
 import { SleepData } from './types/sleep';
 import { gramsToPounds } from './common/WeightUtils';
+import { convertMLToOunces } from './common/HydrationUtils';
 
 let config: GCCredentials | undefined = undefined;
 
@@ -410,6 +411,24 @@ export default class GarminConnect {
             return gramsToPounds(weightData.totalAverage.weight);
         } else {
             throw new Error("Can't find valid daily weight for this date.");
+        }
+    }
+
+    async getDailyHydration(date = new Date()): Promise<number> {
+        try {
+            const dateString = toDateString(date);
+            const hydrationData = await this.client.get<HydrationData>(
+                `${this.url.DAILY_HYDRATION}/${dateString}`
+            );
+
+            if (!hydrationData || !hydrationData.valueInML) {
+                throw new Error('Invalid or empty hydration data response.');
+            }
+
+            return convertMLToOunces(hydrationData.valueInML);
+        } catch (error: any) {
+            // Handle network errors, HTTP errors, or unexpected issues
+            throw new Error(`Error in getDailyHydration: ${error.message}`);
         }
     }
 
