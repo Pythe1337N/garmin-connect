@@ -423,48 +423,6 @@ const hydrationInOunces = await GCClient.getDailyHydration(
 );
 ```
 
-### `updateHydrationLogOunces(date?: Date, valueInOz: number): Promise<WaterIntake>`
-
-Adds a hydration log entry in ounces for a given date.
-
-#### Parameters:
-
--   `date` (Date, optional): Date of the log entry; defaults to today if no date is supplied.
--   `valueInOz` (number): Amount of water intake in ounces. Accepts negative number.
-
-#### Returns:
-
--   `Promise<WaterIntake>`: A Promise that resolves to the hydration log entry.
-
-#### Example:
-
-```js
-const hydrationLogEntry = await GCClient.addHydrationLogOunces(
-    new Date('2020-03-24'),
-    16
-);
-```
-
-### `updateWeight(date = new Date(), lbs: number, timezone: string): Promise<UpdateWeight>`
-
-Updates weight information
-
-#### Parameters:
-
--   `date` (optional): Date object representing the weight entry date. Defaults to the current date if not provided.
--   `lbs` (number): Weight value in pounds.
--   `timezone` (string): String representing the timezone for the weight entry.
-
-#### Returns:
-
--   `Promise<UpdateWeight>`: A Promise that resolves to the result of the weight update.
-
-#### Example:
-
-```js
-await GCClient.updateWeight(undefined, 202.9, 'America/Los_Angeles');
-```
-
 ### `getGolfSummary(): Promise<GolfSummary>`
 
 Retrieves a summary of golf scorecard data.
@@ -537,15 +495,47 @@ const activity = activities[0];
 await GCClient.deleteActivity(activity);
 ```
 
-### Add weight
+### `updateHydrationLogOunces(date?: Date, valueInOz: number): Promise<WaterIntake>`
 
-To add a new weight measurement, use `setBodyWeight`. Here you specify your weight in _kg_.
+Adds a hydration log entry in ounces for a given date.
+
+#### Parameters:
+
+-   `date` (Date, optional): Date of the log entry; defaults to today if no date is supplied.
+-   `valueInOz` (number): Amount of water intake in ounces. Accepts negative number.
+
+#### Returns:
+
+-   `Promise<WaterIntake>`: A Promise that resolves to the hydration log entry.
+
+#### Example:
 
 ```js
-GCClient.setBodyWeight(81.4);
+const hydrationLogEntry = await GCClient.addHydrationLogOunces(
+    new Date('2020-03-24'),
+    16
+);
 ```
 
-Will set your current weight to 81.4kg. The unit used might be tied to your preferred weight settings.
+### `updateWeight(date = new Date(), lbs: number, timezone: string): Promise<UpdateWeight>`
+
+Updates weight information
+
+#### Parameters:
+
+-   `date` (optional): Date object representing the weight entry date. Defaults to the current date if not provided.
+-   `lbs` (number): Weight value in pounds.
+-   `timezone` (string): String representing the timezone for the weight entry.
+
+#### Returns:
+
+-   `Promise<UpdateWeight>`: A Promise that resolves to the result of the weight update.
+
+#### Example:
+
+```js
+await GCClient.updateWeight(undefined, 202.9, 'America/Los_Angeles');
+```
 
 ### Add workout
 
