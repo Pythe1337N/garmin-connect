@@ -25,7 +25,7 @@ import {
     IWorkoutDetail,
     UploadFileType,
     UploadFileTypeTypeValue
-} from './types/types';
+} from './types';
 import Running from './workouts/Running';
 import { calculateTimeDifference, toDateString } from './common/DateUtils';
 import { SleepData } from './types/sleep';

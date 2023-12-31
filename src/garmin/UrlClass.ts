@@ -1,4 +1,4 @@
-import { GCWorkoutId, GarminDomain } from './types/types';
+import { GCWorkoutId, GarminDomain } from './types';
 
 export class UrlClass {
     private domain: GarminDomain;

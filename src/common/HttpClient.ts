@@ -15,7 +15,7 @@ import {
     IOauth1Consumer,
     IOauth1Token,
     IOauth2Token
-} from '../garmin/types/types';
+} from '../garmin/types';
 const crypto = require('crypto');
 
 const CSRF_RE = new RegExp('name="_csrf"\\s+value="(.+?)"');
