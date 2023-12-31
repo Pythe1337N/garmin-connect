@@ -363,7 +363,7 @@ Retrieves the daily weight and converts it from grams to pounds.
 #### Example:
 
 ```js
-const weightInPounds = await instance.getDailyWeight(new Date('2023-12-25'));
+const weightInPounds = await GCClient.getDailyWeight(new Date('2023-12-25'));
 ```
 
 ## Modifying data
