@@ -17,3 +17,15 @@ interface HydrationContainer {
     volume: number;
     unit: string;
 }
+
+// hydration/log
+interface WaterIntake {
+    userId: number;
+    calendarDate: string;
+    valueInML: number;
+    goalInML: number;
+    dailyAverageinML: number | null;
+    lastEntryTimestampLocal: string;
+    sweatLossInML: number | null;
+    activityIntakeInML: number;
+}

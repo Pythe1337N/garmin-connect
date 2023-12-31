@@ -10,10 +10,8 @@ import { checkIsDirectory, createDirectory, writeToFile } from '../utils';
 import { UrlClass } from './UrlClass';
 import {
     ExportFileTypeValue,
-    GCActivityId,
     GCUserHash,
     GarminDomain,
-    IActivity,
     ICountActivities,
     IDailyStepsType,
     IGarminTokens,
@@ -30,7 +28,13 @@ import Running from './workouts/Running';
 import { calculateTimeDifference, toDateString } from './common/DateUtils';
 import { SleepData } from './types/sleep';
 import { gramsToPounds } from './common/WeightUtils';
-import { convertMLToOunces } from './common/HydrationUtils';
+import { convertMLToOunces, convertOuncesToML } from './common/HydrationUtils';
+import {
+    ActivitySubType,
+    ActivityType,
+    GCActivityId,
+    IActivity
+} from './types/activity';
 
 let config: GCCredentials | undefined = undefined;
 
@@ -145,11 +149,17 @@ export default class GarminConnect {
         return this.client.get<ISocialProfile>(this.url.USER_PROFILE);
     }
 
-    async getActivities(start: number, limit: number): Promise<IActivity[]> {
+    async getActivities(
+        start?: number,
+        limit?: number,
+        activityType?: ActivityType,
+        subActivityType?: ActivitySubType
+    ): Promise<IActivity[]> {
         return this.client.get<IActivity[]>(this.url.ACTIVITIES, {
-            params: { start, limit }
+            params: { start, limit, activityType, subActivityType }
         });
     }
+
     async getActivity(activity: {
         activityId: GCActivityId;
     }): Promise<IActivity> {
@@ -158,6 +168,7 @@ export default class GarminConnect {
             this.url.ACTIVITY + activity.activityId
         );
     }
+
     async countActivities(): Promise<ICountActivities> {
         return this.client.get<ICountActivities>(this.url.STAT_ACTIVITIES, {
             params: {
@@ -328,18 +339,16 @@ export default class GarminConnect {
             const dateString = toDateString(date);
 
             const sleepData = await this.client.get<SleepData>(
-                `${this.url.DAILY_SLEEP}?date=${dateString}`
+                `${this.url.DAILY_SLEEP}`,
+                { params: { date: dateString } }
             );
 
             if (!sleepData) {
                 throw new Error('Invalid or empty sleep data response.');
             }
 
-            // Add more specific checks if needed based on the structure of your SleepData type
-
             return sleepData;
         } catch (error: any) {
-            // Handle network errors, HTTP errors, or unexpected issues
             throw new Error(`Error in getSleepData: ${error.message}`);
         }
     }
@@ -376,7 +385,6 @@ export default class GarminConnect {
                 minutes
             };
         } catch (error: any) {
-            // Handle any other errors that might occur during the process
             throw new Error(`Error in getSleepDuration: ${error.message}`);
         }
     }
@@ -392,16 +400,13 @@ export default class GarminConnect {
                 throw new Error('Invalid or empty weight data response.');
             }
 
-            // Add more specific checks if needed based on the structure of your WeightData type
-
             return weightData;
         } catch (error: any) {
-            // Handle network errors, HTTP errors, or unexpected issues
             throw new Error(`Error in getDailyWeightData: ${error.message}`);
         }
     }
 
-    async getDailyWeight(date = new Date()): Promise<number> {
+    async getDailyWeightInPounds(date = new Date()): Promise<number> {
         const weightData = await this.getDailyWeightData(date);
 
         if (
@@ -431,6 +436,79 @@ export default class GarminConnect {
         }
     }
 
+    async updateHydrationLogOunces(
+        date = new Date(),
+        valueInOz: number
+    ): Promise<WaterIntake> {
+        try {
+            const dateString = toDateString(date);
+            const hydrationData = await this.client.put<WaterIntake>(
+                `${this.url.HYDRATION_LOG}`,
+                {
+                    calendarDate: dateString,
+                    valueInML: convertOuncesToML(valueInOz),
+                    userProfileId: (await this.getUserProfile()).profileId,
+                    timestampLocal: new Date().toISOString().substring(0, 23)
+                }
+            );
+
+            return hydrationData;
+        } catch (error: any) {
+            throw new Error(
+                `Error in updateHydrationLogOunces: ${error.message}`
+            );
+        }
+    }
+
+    async getGolfSummary(): Promise<GolfSummary> {
+        try {
+            const golfSummary = await this.client.get<GolfSummary>(
+                `${this.url.GOLF_SCORECARD_SUMMARY}`
+            );
+
+            if (!golfSummary) {
+                throw new Error('Invalid or empty golf summary data response.');
+            }
+
+            return golfSummary;
+        } catch (error: any) {
+            throw new Error(`Error in getGolfSummary: ${error.message}`);
+        }
+    }
+
+    async getGolfScorecard(scorecardId: number): Promise<GolfScorecard> {
+        try {
+            const golfScorecard = await this.client.get<GolfScorecard>(
+                `${this.url.GOLF_SCORECARD_DETAIL}`,
+                { params: { 'scorecard-ids': scorecardId } }
+            );
+
+            if (!golfScorecard) {
+                throw new Error(
+                    'Invalid or empty golf scorecard data response.'
+                );
+            }
+
+            return golfScorecard;
+        } catch (error: any) {
+            throw new Error(`Error in getGolfScorecard: ${error.message}`);
+        }
+    }
+
+    async getHeartRate(date = new Date()): Promise<HeartRate> {
+        try {
+            const dateString = toDateString(date);
+            const heartRate = await this.client.get<HeartRate>(
+                `${this.url.DAILY_HEART_RATE}`,
+                { params: { date: dateString } }
+            );
+
+            return heartRate;
+        } catch (error: any) {
+            throw new Error(`Error in getHeartRate: ${error.message}`);
+        }
+    }
+
     async get<T>(url: string, data?: any) {
         const response = await this.client.get(url, data);
         return response as T;
@@ -438,6 +516,11 @@ export default class GarminConnect {
 
     async post<T>(url: string, data: any) {
         const response = await this.client.post<T>(url, data, {});
+        return response as T;
+    }
+
+    async put<T>(url: string, data: any) {
+        const response = await this.client.put<T>(url, data, {});
         return response as T;
     }
 }

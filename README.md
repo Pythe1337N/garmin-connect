@@ -180,42 +180,55 @@ Get a list of all registered devices including model numbers and firmware versio
 GCClient.getDeviceInfo();
 ```
 
-### Activities
+### `getActivities(start: number, limit: number, activityType?: ActivityType, subActivityType?: ActivitySubType): Promise<IActivity[]>`
 
-To get a list of recent activities, use the `getActivities` method. This function takes two arguments, _start_ and _limit_, which is used for pagination. Both are optional and will default to whatever Garmin Connect is using. To be sure to get all activities, use this correctly.
+Retrieves a list of activities based on specified parameters.
 
-```js
-// Get a list of default length with most recent activities
-GCClient.getActivities();
-// Get activities 10 through 15. (start 10, limit 5)
-GCClient.getActivities(10, 5);
-```
+#### Parameters:
 
-### Activity details
+-   `start` (number, optonal): Index to start fetching activities.
+-   `limit` (number, optonal): Number of activities to retrieve.
+-   `activityType` (ActivityType, optional): Type of activity (if specified, start must be null).
+-   `subActivityType` (ActivitySubType, optional): Subtype of activity (if specified, start must be null).
 
-Use the activityId to get activity details.
+#### Returns:
 
-```js
-// search for the activity (optional)
-const [activity] = await GCClient.getActivities(0, 1);
-// get the activity details
-const activityDetails = await GCClient.getActivityDetails(activity.activityId);
-```
+-   `Promise<IActivity[]>`: A Promise that resolves to an array of activities.
 
-### Activity metrics details
-
-Use the activityId to get metrics details about that specific activity.
+#### Example:
 
 ```js
-const activities = await GCClient.getActivities(0, 1);
-const id = activities[0].activityId;
-// Use the id as a parameter
-GCClient.getActivity({ activityId: id });
-// Or the whole activity response
-GCClient.getActivity(activities[0]);
+const activities = await GCClient.getActivities(
+    0,
+    10,
+    ActivityType.Running,
+    ActivitySubType.Outdoor
+);
 ```
 
-### Activities
+### `getActivity(activity: { activityId: GCActivityId }): Promise<IActivity>`
+
+Retrieves details for a specific activity based on the provided `activityId`.
+
+#### Parameters:
+
+-   `activity` (object): An object containing the `activityId` property.
+
+    -   `activityId` (GCActivityId): Identifier for the desired activity.
+
+#### Returns:
+
+-   `Promise<IActivity>`: A Promise that resolves to the details of the specified activity.
+
+#### Example:
+
+```js
+const activityDetails = await GCClient.getActivity({
+    activityId: 'exampleActivityId'
+});
+```
+
+### News Feed is not implemented yet. // TODO: Implement this function
 
 To get a list of activities in your news feed, use the `getNewsFeed` method. This function takes two arguments, _start_ and _limit_, which is used for pagination. Both are optional and will default to whatever Garmin Connect is using. To be sure to get all activities, use this correctly.
 
@@ -276,13 +289,22 @@ await GCClient.deleteImage(
 );
 ```
 
-### Step count
+### `getSteps(date?: Date): Promise<number>`
 
-Get timestamp and number of steps taken for a specific date.
+Retrieves the total steps for a given date.
+
+#### Parameters:
+
+-   `date` (Date, optional): Date of the steps information requested; defaults to today if no date is supplied.
+
+#### Returns:
+
+-   `Promise<number>`: A Promise that resolves to the total steps for the specified date.
+
+#### Example:
 
 ```js
-// This will default to today if no date is supplied
-const steps = await GCClient.getSteps(new Date('2020-03-24'));
+const totalSteps = await GCClient.getSteps(new Date('2020-03-24'));
 ```
 
 ### Heart rate
@@ -344,7 +366,7 @@ Retrieves hours and minutes slept for a given date
 const detailedSleep = await GCClient.getSleepDuration(new Date('2020-03-24'));
 ```
 
-### `getDailyWeight(date?: Date): Promise<number>`
+### `getDailyWeightData(date?: Date): Promise<number>`
 
 Retrieves the daily weight and converts it from grams to pounds.
 
@@ -363,7 +385,27 @@ Retrieves the daily weight and converts it from grams to pounds.
 #### Example:
 
 ```js
-const weightInPounds = await GCClient.getDailyWeight(new Date('2023-12-25'));
+const weightData = await GCClient.getDailyWeightData(new Date('2023-12-25'));
+```
+
+### `getDailyWeightInPounds(date?: Date): Promise<number>`
+
+Retrieves the daily weight in pounds for a given date.
+
+#### Parameters:
+
+-   `date` (Date, optional): Date of information requested; defaults to today if no date is supplied.
+
+#### Returns:
+
+-   `Promise<number>`: A Promise that resolves to the daily weight in pounds.
+
+#### Example:
+
+```js
+const weightInPounds = await GCClient.getDailyWeightInPounds(
+    new Date('2020-03-24')
+);
 ```
 
 ## `getDailyHydration(date?: Date): Promise<number>`
@@ -390,9 +432,82 @@ const hydrationInOunces = await GCClient.getDailyHydration(
 );
 ```
 
+### `updateHydrationLogOunces(date?: Date, valueInOz: number): Promise<WaterIntake>`
+
+Adds a hydration log entry in ounces for a given date.
+
+#### Parameters:
+
+-   `date` (Date, optional): Date of the log entry; defaults to today if no date is supplied.
+-   `valueInOz` (number): Amount of water intake in ounces. Accepts negative number.
+
+#### Returns:
+
+-   `Promise<WaterIntake>`: A Promise that resolves to the hydration log entry.
+
+#### Example:
+
+```js
+const hydrationLogEntry = await GCClient.addHydrationLogOunces(
+    new Date('2020-03-24'),
+    16
+);
+```
+
+### `getGolfSummary(): Promise<GolfSummary>`
+
+Retrieves a summary of golf scorecard data.
+
+#### Returns:
+
+-   `Promise<GolfSummary>`: A Promise that resolves to the golf scorecard summary.
+
+#### Example:
+
+```js
+const golfSummary = await GCClient.getGolfSummary();
+```
+
+### `getGolfScorecard(scorecardId: number): Promise<GolfScorecard>`
+
+Retrieves golf scorecard data for a specific scorecard.
+
+#### Parameters:
+
+-   `scorecardId` (number): Identifier for the desired golf scorecard.
+
+#### Returns:
+
+-   `Promise<GolfScorecard>`: A Promise that resolves to the golf scorecard data.
+
+#### Example:
+
+```js
+const scorecardId = 123; // Replace with the desired scorecard ID
+const golfScorecard = await GCClient.getGolfScorecard(scorecardId);
+```
+
+### `getHeartRate(date?: Date): Promise<HeartRate>`
+
+Retrieves daily heart rate data for a given date.
+
+#### Parameters:
+
+-   `date` (Date, optional): Date of the heart rate data requested; defaults to today if no date is supplied.
+
+#### Returns:
+
+-   `Promise<HeartRate>`: A Promise that resolves to the daily heart rate data.
+
+#### Example:
+
+```js
+const heartRateData = await GCClient.getHeartRate(new Date('2020-03-24'));
+```
+
 ## Modifying data
 
-### Update activity
+### Update activity is not implemented yet. // TODO: Implement this function
 
 ```js
 const activities = await GCClient.getActivities(0, 1);

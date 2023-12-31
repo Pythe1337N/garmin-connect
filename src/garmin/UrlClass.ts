@@ -74,6 +74,18 @@ export class UrlClass {
     get DAILY_HYDRATION() {
         return `${this.GC_API}/usersummary-service/usersummary/hydration/allData`;
     }
+    get HYDRATION_LOG() {
+        return `${this.GC_API}/usersummary-service/usersummary/hydration/log`;
+    }
+    get GOLF_SCORECARD_SUMMARY() {
+        return `${this.GC_API}/gcs-golfcommunity/api/v2/scorecard/summary`;
+    }
+    get GOLF_SCORECARD_DETAIL() {
+        return `${this.GC_API}/gcs-golfcommunity/api/v2/scorecard/detail`;
+    }
+    get DAILY_HEART_RATE() {
+        return `${this.GC_API}/wellness-service/wellness/dailyHeartRate`;
+    }
     WORKOUT(id?: GCWorkoutId) {
         if (id) {
             return `${this.GC_API}/workout-service/workout/${id}`;
