@@ -27,7 +27,7 @@ import {
     UploadFileTypeTypeValue
 } from './types/types';
 import Running from './workouts/Running';
-import { toDateString } from './common/DateUtils';
+import { calculateTimeDifference, toDateString } from './common/DateUtils';
 import { SleepData } from './types/sleep';
 import { gramsToPounds } from './common/WeightUtils';
 
@@ -365,13 +365,10 @@ export default class GarminConnect {
             const sleepEndTimestampGMT =
                 sleepData.dailySleepDTO.sleepEndTimestampGMT;
 
-            // Calculate time difference in seconds
-            const timeDifferenceInSeconds =
-                (sleepEndTimestampGMT - sleepStartTimestampGMT) / 1000;
-
-            // Convert time difference to hours and minutes
-            const hours = Math.floor(timeDifferenceInSeconds / 3600);
-            const minutes = Math.floor((timeDifferenceInSeconds % 3600) / 60);
+            const { hours, minutes } = calculateTimeDifference(
+                sleepStartTimestampGMT,
+                sleepEndTimestampGMT
+            );
 
             return {
                 hours,
@@ -386,7 +383,6 @@ export default class GarminConnect {
     async getDailyWeightData(date = new Date()): Promise<WeightData> {
         try {
             const dateString = toDateString(date);
-            console.log(`${this.url.DAILY_WEIGHT}/${dateString}`);
             const weightData = await this.client.get<WeightData>(
                 `${this.url.DAILY_WEIGHT}/${dateString}`
             );
