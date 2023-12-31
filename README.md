@@ -294,7 +294,7 @@ Get heart rate for a specific date.
 const heartRate = await GCClient.getHeartRate(new Date('2020-03-24'));
 ```
 
-### `getSleepData(date: string): Promise<SleepData`
+### `getSleepData(date: string): Promise<SleepData>`
 
 Retrieves all sleep data for a given date
 
