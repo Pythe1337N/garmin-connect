@@ -456,7 +456,7 @@ const hydrationLogEntry = await GCClient.addHydrationLogOunces(
 
 ### `updateWeight(date = new Date(), lbs: number, timezone: string): Promise<UpdateWeight>`
 
-Updates weight information using the Weight Tracker API.
+Updates weight information
 
 #### Parameters:
 
