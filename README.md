@@ -156,7 +156,7 @@ Receive basic user information
 GCClient.getUserInfo();
 ```
 
-### Social Profileis not implemented yet. // TODO: Implement this function
+### Social Profile is not implemented yet. // TODO: Implement this function
 
 Receive social user information
 
@@ -164,7 +164,7 @@ Receive social user information
 GCClient.getSocialProfile();
 ```
 
-### Social Connectionsis not implemented yet. // TODO: Implement this function
+### Social Connections is not implemented yet. // TODO: Implement this function
 
 Get a list of all social connections
 
@@ -172,7 +172,7 @@ Get a list of all social connections
 GCClient.getSocialConnections();
 ```
 
-### Device infois not implemented yet. // TODO: Implement this function
+### Device info is not implemented yet. // TODO: Implement this function
 
 Get a list of all registered devices including model numbers and firmware versions.
 
