@@ -224,6 +224,20 @@ export default class GarminConnect {
         );
     }
 
+    async downloadWellnessData(date: Date, dir: string) {
+        const dateStr = toDateString(date);
+        if (!checkIsDirectory(dir)) {
+            createDirectory(dir);
+        }
+        let fileBuffer = await this.client.get<Buffer>(
+            this.url.DOWNLOAD_WELLNESS + dateStr,
+            {
+                responseType: 'arraybuffer'
+            }
+        );
+        writeToFile(path.join(dir, `${dateStr}.zip`), fileBuffer);
+    }
+
     async uploadActivity(
         file: string,
         format: UploadFileTypeTypeValue = 'fit'
