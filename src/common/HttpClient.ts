@@ -134,6 +134,15 @@ export class HttpClient {
         return response?.data;
     }
 
+    async put<T>(
+        url: string,
+        data: any,
+        config?: AxiosRequestConfig<any>
+    ): Promise<T> {
+        const response = await this.client.put<T>(url, data, config);
+        return response?.data;
+    }
+
     async delete<T>(url: string, config?: AxiosRequestConfig<any>): Promise<T> {
         const response = await this.client.post<T>(url, null, {
             ...config,

@@ -10,10 +10,8 @@ import { checkIsDirectory, createDirectory, writeToFile } from '../utils';
 import { UrlClass } from './UrlClass';
 import {
     ExportFileTypeValue,
-    GCActivityId,
     GCUserHash,
     GarminDomain,
-    IActivity,
     ICountActivities,
     IDailyStepsType,
     IGarminTokens,
@@ -27,7 +25,20 @@ import {
     UploadFileTypeTypeValue
 } from './types';
 import Running from './workouts/Running';
-import { toDateString } from './common/DateUtils';
+import {
+    calculateTimeDifference,
+    getLocalTimestamp,
+    toDateString
+} from './common/DateUtils';
+import { SleepData } from './types/sleep';
+import { gramsToPounds } from './common/WeightUtils';
+import { convertMLToOunces, convertOuncesToML } from './common/HydrationUtils';
+import {
+    ActivitySubType,
+    ActivityType,
+    GCActivityId,
+    IActivity
+} from './types/activity';
 
 let config: GCCredentials | undefined = undefined;
 
@@ -142,11 +153,17 @@ export default class GarminConnect {
         return this.client.get<ISocialProfile>(this.url.USER_PROFILE);
     }
 
-    async getActivities(start: number, limit: number): Promise<IActivity[]> {
+    async getActivities(
+        start?: number,
+        limit?: number,
+        activityType?: ActivityType,
+        subActivityType?: ActivitySubType
+    ): Promise<IActivity[]> {
         return this.client.get<IActivity[]>(this.url.ACTIVITIES, {
-            params: { start, limit }
+            params: { start, limit, activityType, subActivityType }
         });
     }
+
     async getActivity(activity: {
         activityId: GCActivityId;
     }): Promise<IActivity> {
@@ -155,6 +172,7 @@ export default class GarminConnect {
             this.url.ACTIVITY + activity.activityId
         );
     }
+
     async countActivities(): Promise<ICountActivities> {
         return this.client.get<ICountActivities>(this.url.STAT_ACTIVITIES, {
             params: {
@@ -320,6 +338,203 @@ export default class GarminConnect {
         return dayStats.totalSteps;
     }
 
+    async getSleepData(date = new Date()): Promise<SleepData> {
+        try {
+            const dateString = toDateString(date);
+
+            const sleepData = await this.client.get<SleepData>(
+                `${this.url.DAILY_SLEEP}`,
+                { params: { date: dateString } }
+            );
+
+            if (!sleepData) {
+                throw new Error('Invalid or empty sleep data response.');
+            }
+
+            return sleepData;
+        } catch (error: any) {
+            throw new Error(`Error in getSleepData: ${error.message}`);
+        }
+    }
+
+    async getSleepDuration(
+        date = new Date()
+    ): Promise<{ hours: number; minutes: number }> {
+        try {
+            const sleepData = await this.getSleepData(date);
+
+            if (
+                !sleepData ||
+                !sleepData.dailySleepDTO ||
+                sleepData.dailySleepDTO.sleepStartTimestampGMT === undefined ||
+                sleepData.dailySleepDTO.sleepEndTimestampGMT === undefined
+            ) {
+                throw new Error(
+                    'Invalid or missing sleep data for the specified date.'
+                );
+            }
+
+            const sleepStartTimestampGMT =
+                sleepData.dailySleepDTO.sleepStartTimestampGMT;
+            const sleepEndTimestampGMT =
+                sleepData.dailySleepDTO.sleepEndTimestampGMT;
+
+            const { hours, minutes } = calculateTimeDifference(
+                sleepStartTimestampGMT,
+                sleepEndTimestampGMT
+            );
+
+            return {
+                hours,
+                minutes
+            };
+        } catch (error: any) {
+            throw new Error(`Error in getSleepDuration: ${error.message}`);
+        }
+    }
+
+    async getDailyWeightData(date = new Date()): Promise<WeightData> {
+        try {
+            const dateString = toDateString(date);
+            const weightData = await this.client.get<WeightData>(
+                `${this.url.DAILY_WEIGHT}/${dateString}`
+            );
+
+            if (!weightData) {
+                throw new Error('Invalid or empty weight data response.');
+            }
+
+            return weightData;
+        } catch (error: any) {
+            throw new Error(`Error in getDailyWeightData: ${error.message}`);
+        }
+    }
+
+    async getDailyWeightInPounds(date = new Date()): Promise<number> {
+        const weightData = await this.getDailyWeightData(date);
+
+        if (
+            weightData.totalAverage &&
+            typeof weightData.totalAverage.weight === 'number'
+        ) {
+            return gramsToPounds(weightData.totalAverage.weight);
+        } else {
+            throw new Error("Can't find valid daily weight for this date.");
+        }
+    }
+
+    async getDailyHydration(date = new Date()): Promise<number> {
+        try {
+            const dateString = toDateString(date);
+            const hydrationData = await this.client.get<HydrationData>(
+                `${this.url.DAILY_HYDRATION}/${dateString}`
+            );
+
+            if (!hydrationData || !hydrationData.valueInML) {
+                throw new Error('Invalid or empty hydration data response.');
+            }
+
+            return convertMLToOunces(hydrationData.valueInML);
+        } catch (error: any) {
+            throw new Error(`Error in getDailyHydration: ${error.message}`);
+        }
+    }
+
+    async updateWeight(
+        date = new Date(),
+        lbs: number,
+        timezone: string
+    ): Promise<UpdateWeight> {
+        try {
+            const weightData = await this.client.post<UpdateWeight>(
+                `${this.url.UPDATE_WEIGHT}`,
+                {
+                    dateTimestamp: getLocalTimestamp(date, timezone),
+                    gmtTimestamp: date.toISOString().substring(0, 23),
+                    unitKey: 'lbs',
+                    value: lbs
+                }
+            );
+
+            return weightData;
+        } catch (error: any) {
+            throw new Error(`Error in updateWeight: ${error.message}`);
+        }
+    }
+
+    async updateHydrationLogOunces(
+        date = new Date(),
+        valueInOz: number
+    ): Promise<WaterIntake> {
+        try {
+            const dateString = toDateString(date);
+            const hydrationData = await this.client.put<WaterIntake>(
+                `${this.url.HYDRATION_LOG}`,
+                {
+                    calendarDate: dateString,
+                    valueInML: convertOuncesToML(valueInOz),
+                    userProfileId: (await this.getUserProfile()).profileId,
+                    timestampLocal: date.toISOString().substring(0, 23)
+                }
+            );
+
+            return hydrationData;
+        } catch (error: any) {
+            throw new Error(
+                `Error in updateHydrationLogOunces: ${error.message}`
+            );
+        }
+    }
+
+    async getGolfSummary(): Promise<GolfSummary> {
+        try {
+            const golfSummary = await this.client.get<GolfSummary>(
+                `${this.url.GOLF_SCORECARD_SUMMARY}`
+            );
+
+            if (!golfSummary) {
+                throw new Error('Invalid or empty golf summary data response.');
+            }
+
+            return golfSummary;
+        } catch (error: any) {
+            throw new Error(`Error in getGolfSummary: ${error.message}`);
+        }
+    }
+
+    async getGolfScorecard(scorecardId: number): Promise<GolfScorecard> {
+        try {
+            const golfScorecard = await this.client.get<GolfScorecard>(
+                `${this.url.GOLF_SCORECARD_DETAIL}`,
+                { params: { 'scorecard-ids': scorecardId } }
+            );
+
+            if (!golfScorecard) {
+                throw new Error(
+                    'Invalid or empty golf scorecard data response.'
+                );
+            }
+
+            return golfScorecard;
+        } catch (error: any) {
+            throw new Error(`Error in getGolfScorecard: ${error.message}`);
+        }
+    }
+
+    async getHeartRate(date = new Date()): Promise<HeartRate> {
+        try {
+            const dateString = toDateString(date);
+            const heartRate = await this.client.get<HeartRate>(
+                `${this.url.DAILY_HEART_RATE}`,
+                { params: { date: dateString } }
+            );
+
+            return heartRate;
+        } catch (error: any) {
+            throw new Error(`Error in getHeartRate: ${error.message}`);
+        }
+    }
+
     async get<T>(url: string, data?: any) {
         const response = await this.client.get(url, data);
         return response as T;
@@ -327,6 +542,11 @@ export default class GarminConnect {
 
     async post<T>(url: string, data: any) {
         const response = await this.client.post<T>(url, data, {});
+        return response as T;
+    }
+
+    async put<T>(url: string, data: any) {
+        const response = await this.client.put<T>(url, data, {});
         return response as T;
     }
 }
