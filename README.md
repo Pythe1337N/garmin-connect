@@ -569,6 +569,24 @@ const id = workouts[0].workoutId;
 GCClient.deleteWorkout({ workoutId: id });
 ```
 
+### ` downloadWellnessData(date: Date, dir: string):void`
+
+Download daily wellness data, such as heart rate, HRV, stress, sleep, breathing, etc.
+
+#### Parameters:
+
+-   `date` (Date, optional): Date of information requested. Defaults to the current date.
+-   `dir` (String, require): a directory path where you want to save the file
+
+#### Example:
+
+```js
+await GCClient.downloadWellnessData(
+    new Date('2023-01-11'),
+    'a directory path where you want to save the file'
+);
+```
+
 ## Custom requests
 
 This library will handle custom requests to your active Garmin Connect session. There are a lot of different url's that is used, which means that this library probably wont cover them all. By using the network analyze tool you can find url's that are used by Garmin Connect to fetch data.

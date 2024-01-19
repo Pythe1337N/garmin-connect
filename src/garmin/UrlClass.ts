@@ -56,6 +56,9 @@ export class UrlClass {
     get DOWNLOAD_KML() {
         return `${this.GC_API}/download-service/export/kml/activity/`;
     }
+    get DOWNLOAD_WELLNESS() {
+        return `${this.GC_API}/download-service/files/wellness/`;
+    }
     get UPLOAD() {
         return `${this.GC_API}/upload-service/upload/`;
     }
