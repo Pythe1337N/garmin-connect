@@ -44,6 +44,9 @@ export class UrlClass {
     get STAT_ACTIVITIES() {
         return `${this.GC_API}/fitnessstats-service/activity`;
     }
+    get ACTIVITY_GEAR() {
+        return `${this.GC_API}/gear-service/gear/filterGear`;
+    }
     get DOWNLOAD_ZIP() {
         return `${this.GC_API}/download-service/files/activity/`;
     }

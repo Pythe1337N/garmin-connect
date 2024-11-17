@@ -184,6 +184,14 @@ export default class GarminConnect {
         });
     }
 
+    async getActivityGear(activityId: string): Promise<ICountActivities> {
+        return this.client.get<ICountActivities>(this.url.ACTIVITY_GEAR, {
+            params: {
+                activityId
+            }
+        });
+    }
+
     async downloadOriginalActivityData(
         activity: { activityId: GCActivityId },
         dir: string,
