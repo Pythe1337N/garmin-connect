@@ -12,6 +12,7 @@ import {
     ExportFileTypeValue,
     GCUserHash,
     GarminDomain,
+    IActivityGear,
     ICountActivities,
     IDailyStepsType,
     IGarminTokens,
@@ -184,8 +185,8 @@ export default class GarminConnect {
         });
     }
 
-    async getActivityGear(activityId: string): Promise<ICountActivities> {
-        return this.client.get<ICountActivities>(this.url.ACTIVITY_GEAR, {
+    async getActivityGear(activityId: string): Promise<IActivityGear[]> {
+        return this.client.get<IActivityGear[]>(this.url.ACTIVITY_GEAR, {
             params: {
                 activityId
             }
