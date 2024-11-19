@@ -2,6 +2,7 @@ export type GCUserProfileId = number;
 export type GCUserHash = string;
 export type GCWorkoutId = string;
 export type GCBadgeId = number;
+export type GCGearId = number;
 export type GarminDomain = 'garmin.com' | 'garmin.cn';
 
 export enum ExportFileType {
@@ -341,14 +342,14 @@ export interface ICountActivities {
 }
 
 export interface IActivityGear {
-    gearPk: number;
+    gearPk: GCGearId;
     uuid: string;
-    userProfilePk: number;
+    userProfilePk: GCUserProfileId;
     gearMakeName: string;
     gearModelName: string;
     gearTypeName: string;
     gearStatusName: string;
-    displayName: string;
+    displayName: string | null;
     customMakeModel: string;
     imageNameLarge: string | null;
     imageNameMedium: string | null;
