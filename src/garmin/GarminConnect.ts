@@ -12,6 +12,7 @@ import {
     ExportFileTypeValue,
     GCUserHash,
     GarminDomain,
+    IActivityGear,
     ICountActivities,
     IDailyStepsType,
     IGarminTokens,
@@ -180,6 +181,14 @@ export default class GarminConnect {
                 startDate: '1970-01-01',
                 endDate: DateTime.now().toFormat('yyyy-MM-dd'),
                 metric: 'duration'
+            }
+        });
+    }
+
+    async getActivityGear(activityId: string): Promise<IActivityGear[]> {
+        return this.client.get<IActivityGear[]>(this.url.ACTIVITY_GEAR, {
+            params: {
+                activityId
             }
         });
     }
