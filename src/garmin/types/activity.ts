@@ -7,7 +7,7 @@ export enum ActivityType {
     Hiking = 'hiking',
     Other = 'other',
     WaterSport = 'water_sports',
-    Running = 'street_running'
+    Running = 'running'
 }
 
 export enum ActivitySubType {
