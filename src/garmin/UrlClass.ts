@@ -1,4 +1,5 @@
-import { GCWorkoutId, GarminDomain } from './types';
+import { GCGearUuid, GCWorkoutId, GarminDomain } from './types';
+import { GCActivityId } from './types/activity';
 
 export class UrlClass {
     private domain: GarminDomain;
@@ -46,6 +47,12 @@ export class UrlClass {
     }
     get ACTIVITY_GEAR() {
         return `${this.GC_API}/gear-service/gear/filterGear`;
+    }
+    ACTIVITY_GEAR_LINK(gearId: GCGearUuid, activityId: GCActivityId) {
+        return `${this.GC_API}/gear-service/gear/link/${gearId}/activity/${activityId}`;
+    }
+    ACTIVITY_GEAR_UNLINK(gearId: GCGearUuid, activityId: GCActivityId) {
+        return `${this.GC_API}/gear-service/gear/unlink/${gearId}/activity/${activityId}`;
     }
     get DOWNLOAD_ZIP() {
         return `${this.GC_API}/download-service/files/activity/`;
