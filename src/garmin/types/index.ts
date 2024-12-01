@@ -199,20 +199,20 @@ export interface IBadge {
 }
 
 export interface Gear {
-    gearPk: number;
-    uuid: string;
-    userProfilePk: number;
+    gearPk: GCGearId;
+    uuid: GCGearUuid;
+    userProfilePk: GCUserProfileId;
     gearMakeName: string;
     gearModelName: string;
     gearTypeName: string;
     gearStatusName: string;
-    displayName: string;
+    displayName: string | null;
     customMakeModel: string;
-    imageNameLarge: any;
-    imageNameMedium: any;
-    imageNameSmall: any;
+    imageNameLarge: string | null;
+    imageNameMedium: string | null;
+    imageNameSmall: string | null;
     dateBegin: string;
-    dateEnd: any;
+    dateEnd: string | null;
     maximumMeters: number;
     notified: boolean;
     createDate: string;
@@ -340,27 +340,6 @@ export interface ICountActivities {
     stats: {
         all: Record<string, any>;
     };
-}
-
-export interface IActivityGear {
-    gearPk: GCGearId;
-    uuid: GCGearUuid;
-    userProfilePk: GCUserProfileId;
-    gearMakeName: string;
-    gearModelName: string;
-    gearTypeName: string;
-    gearStatusName: string;
-    displayName: string | null;
-    customMakeModel: string;
-    imageNameLarge: string | null;
-    imageNameMedium: string | null;
-    imageNameSmall: string | null;
-    dateBegin: string;
-    dateEnd: string | null;
-    maximumMeters: number;
-    notified: boolean;
-    createDate: string;
-    updateDate: string;
 }
 
 // Workouts

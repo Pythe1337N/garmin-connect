@@ -13,7 +13,7 @@ import {
     GCGearUuid,
     GCUserHash,
     GarminDomain,
-    IActivityGear,
+    Gear,
     ICountActivities,
     IDailyStepsType,
     IGarminTokens,
@@ -186,8 +186,8 @@ export default class GarminConnect {
         });
     }
 
-    async getActivityGear(activityId: string): Promise<IActivityGear[]> {
-        return this.client.get<IActivityGear[]>(this.url.ACTIVITY_GEAR, {
+    async getActivityGear(activityId: string): Promise<Gear[]> {
+        return this.client.get<Gear[]>(this.url.ACTIVITY_GEAR, {
             params: {
                 activityId
             }
@@ -197,8 +197,8 @@ export default class GarminConnect {
     async linkActivityGear(
         gearUuid: GCGearUuid,
         activityId: GCActivityId
-    ): Promise<IActivityGear> {
-        return this.client.put<IActivityGear>(
+    ): Promise<Gear> {
+        return this.client.put<Gear>(
             this.url.ACTIVITY_GEAR_LINK(gearUuid, activityId),
             {}
         );
@@ -207,8 +207,8 @@ export default class GarminConnect {
     async unlinkActivityGear(
         gearUuid: GCGearUuid,
         activityId: GCActivityId
-    ): Promise<IActivityGear> {
-        return this.client.put<IActivityGear>(
+    ): Promise<Gear> {
+        return this.client.put<Gear>(
             this.url.ACTIVITY_GEAR_UNLINK(gearUuid, activityId),
             {}
         );
