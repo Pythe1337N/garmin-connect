@@ -10,8 +10,10 @@ import { checkIsDirectory, createDirectory, writeToFile } from '../utils';
 import { UrlClass } from './UrlClass';
 import {
     ExportFileTypeValue,
+    GCGearUuid,
     GCUserHash,
     GarminDomain,
+    Gear,
     ICountActivities,
     IDailyStepsType,
     IGarminTokens,
@@ -182,6 +184,34 @@ export default class GarminConnect {
                 metric: 'duration'
             }
         });
+    }
+
+    async getActivityGear(activityId: string): Promise<Gear[]> {
+        return this.client.get<Gear[]>(this.url.ACTIVITY_GEAR, {
+            params: {
+                activityId
+            }
+        });
+    }
+
+    async linkActivityGear(
+        gearUuid: GCGearUuid,
+        activityId: GCActivityId
+    ): Promise<Gear> {
+        return this.client.put<Gear>(
+            this.url.ACTIVITY_GEAR_LINK(gearUuid, activityId),
+            {}
+        );
+    }
+
+    async unlinkActivityGear(
+        gearUuid: GCGearUuid,
+        activityId: GCActivityId
+    ): Promise<Gear> {
+        return this.client.put<Gear>(
+            this.url.ACTIVITY_GEAR_UNLINK(gearUuid, activityId),
+            {}
+        );
     }
 
     async downloadOriginalActivityData(

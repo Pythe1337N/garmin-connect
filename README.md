@@ -65,7 +65,7 @@ Now you can check `userProfile.userName` to verify that your login was successfu
 ### Save token to file and reuse it.
 
 ```js
-GCClient.saveTokenToFile('/path/to/save/tokens');
+GCClient.exportTokenToFile('/path/to/save/tokens');
 ```
 
 Result:
