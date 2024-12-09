@@ -65,7 +65,7 @@ Now you can check `userProfile.userName` to verify that your login was successfu
 ### Save token to file and reuse it.
 
 ```js
-GCClient.saveTokenToFile('/path/to/save/tokens');
+GCClient.exportTokenToFile('/path/to/save/tokens');
 ```
 
 Result:
@@ -281,7 +281,9 @@ Delete an image from activity
 
 ```js
 const [activity] = await GCClient.getActivities(0, 1);
-const activityDetails = await GCClient.getActivityDetails(activity.activityId);
+const activityDetails = await GCClient.getActivity({
+    activityId: activity.activityId
+});
 
 await GCClient.deleteImage(
     activity,

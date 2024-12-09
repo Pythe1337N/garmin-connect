@@ -10,8 +10,10 @@ import { checkIsDirectory, createDirectory, writeToFile } from '../utils';
 import { UrlClass } from './UrlClass';
 import {
     ExportFileTypeValue,
+    GCGearUuid,
     GCUserHash,
     GarminDomain,
+    Gear,
     ICountActivities,
     IDailyStepsType,
     IGarminTokens,
@@ -37,7 +39,9 @@ import {
     ActivitySubType,
     ActivityType,
     GCActivityId,
-    IActivity
+    IActivity,
+    IActivityDetails,
+    IActivityUploadDetails
 } from './types/activity';
 
 let config: GCCredentials | undefined = undefined;
@@ -166,9 +170,9 @@ export default class GarminConnect {
 
     async getActivity(activity: {
         activityId: GCActivityId;
-    }): Promise<IActivity> {
+    }): Promise<IActivityDetails> {
         if (!activity.activityId) throw new Error('Missing activityId');
-        return this.client.get<IActivity>(
+        return this.client.get<IActivityDetails>(
             this.url.ACTIVITY + activity.activityId
         );
     }
@@ -182,6 +186,34 @@ export default class GarminConnect {
                 metric: 'duration'
             }
         });
+    }
+
+    async getActivityGear(activityId: string): Promise<Gear[]> {
+        return this.client.get<Gear[]>(this.url.ACTIVITY_GEAR, {
+            params: {
+                activityId
+            }
+        });
+    }
+
+    async linkActivityGear(
+        gearUuid: GCGearUuid,
+        activityId: GCActivityId
+    ): Promise<Gear> {
+        return this.client.put<Gear>(
+            this.url.ACTIVITY_GEAR_LINK(gearUuid, activityId),
+            {}
+        );
+    }
+
+    async unlinkActivityGear(
+        gearUuid: GCGearUuid,
+        activityId: GCActivityId
+    ): Promise<Gear> {
+        return this.client.put<Gear>(
+            this.url.ACTIVITY_GEAR_UNLINK(gearUuid, activityId),
+            {}
+        );
     }
 
     async downloadOriginalActivityData(
@@ -236,16 +268,24 @@ export default class GarminConnect {
         const fileBuffer = fs.createReadStream(file);
         const form = new FormData();
         form.append('userfile', fileBuffer);
-        const response = await this.client.post(
-            this.url.UPLOAD + '.' + format,
-            form,
-            {
-                headers: {
-                    'Content-Type': form.getHeaders()['content-type']
-                }
+        const response = await this.client.post(this.url.UPLOAD(format), form, {
+            headers: {
+                'Content-Type': form.getHeaders()['content-type']
             }
+        });
+        return response as IActivityUploadDetails;
+    }
+
+    async getUploadActivityDetails(
+        uploadCreationDate: string,
+        activityId: string
+    ) {
+        // garmin uses "creationDate" from 'upload activity' response on their path to get the status
+        const creationDate = new Date(uploadCreationDate);
+        const response = await this.client.get(
+            this.url.UPLOAD_ACTIVITY_STATUS(creationDate.getTime(), activityId)
         );
-        return response;
+        return response as IActivityUploadDetails;
     }
 
     async deleteActivity(activity: {

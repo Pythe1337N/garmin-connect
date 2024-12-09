@@ -2,6 +2,8 @@ export type GCUserProfileId = number;
 export type GCUserHash = string;
 export type GCWorkoutId = string;
 export type GCBadgeId = number;
+export type GCGearId = number;
+export type GCGearUuid = string;
 export type GarminDomain = 'garmin.com' | 'garmin.cn';
 
 export enum ExportFileType {
@@ -197,20 +199,20 @@ export interface IBadge {
 }
 
 export interface Gear {
-    gearPk: number;
-    uuid: string;
-    userProfilePk: number;
+    gearPk: GCGearId;
+    uuid: GCGearUuid;
+    userProfilePk: GCUserProfileId;
     gearMakeName: string;
     gearModelName: string;
     gearTypeName: string;
     gearStatusName: string;
-    displayName: string;
+    displayName: string | null;
     customMakeModel: string;
-    imageNameLarge: any;
-    imageNameMedium: any;
-    imageNameSmall: any;
+    imageNameLarge: string | null;
+    imageNameMedium: string | null;
+    imageNameSmall: string | null;
     dateBegin: string;
-    dateEnd: any;
+    dateEnd: string | null;
     maximumMeters: number;
     notified: boolean;
     createDate: string;

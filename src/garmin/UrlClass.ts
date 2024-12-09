@@ -1,4 +1,10 @@
-import { GCWorkoutId, GarminDomain } from './types';
+import {
+    GCGearUuid,
+    GCWorkoutId,
+    GarminDomain,
+    UploadFileTypeTypeValue
+} from './types';
+import { GCActivityId } from './types/activity';
 
 export class UrlClass {
     private domain: GarminDomain;
@@ -44,6 +50,15 @@ export class UrlClass {
     get STAT_ACTIVITIES() {
         return `${this.GC_API}/fitnessstats-service/activity`;
     }
+    get ACTIVITY_GEAR() {
+        return `${this.GC_API}/gear-service/gear/filterGear`;
+    }
+    ACTIVITY_GEAR_LINK(gearId: GCGearUuid, activityId: GCActivityId) {
+        return `${this.GC_API}/gear-service/gear/link/${gearId}/activity/${activityId}`;
+    }
+    ACTIVITY_GEAR_UNLINK(gearId: GCGearUuid, activityId: GCActivityId) {
+        return `${this.GC_API}/gear-service/gear/unlink/${gearId}/activity/${activityId}`;
+    }
     get DOWNLOAD_ZIP() {
         return `${this.GC_API}/download-service/files/activity/`;
     }
@@ -56,8 +71,11 @@ export class UrlClass {
     get DOWNLOAD_KML() {
         return `${this.GC_API}/download-service/export/kml/activity/`;
     }
-    get UPLOAD() {
-        return `${this.GC_API}/upload-service/upload/`;
+    UPLOAD(format: UploadFileTypeTypeValue) {
+        return `${this.GC_API}/upload-service/upload/.${format}`;
+    }
+    UPLOAD_ACTIVITY_STATUS(uploadTime: number, activityId: string) {
+        return `${this.GC_API}/activity-service/activity/status/${uploadTime}/${activityId}`;
     }
     get IMPORT_DATA() {
         return `${this.GC_API}/modern/import-data`;
