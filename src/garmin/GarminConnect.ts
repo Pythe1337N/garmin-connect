@@ -40,6 +40,7 @@ import {
     ActivityType,
     GCActivityId,
     IActivity,
+    IActivityDetails,
     IActivityUploadDetails
 } from './types/activity';
 
@@ -169,9 +170,9 @@ export default class GarminConnect {
 
     async getActivity(activity: {
         activityId: GCActivityId;
-    }): Promise<IActivity> {
+    }): Promise<IActivityDetails> {
         if (!activity.activityId) throw new Error('Missing activityId');
-        return this.client.get<IActivity>(
+        return this.client.get<IActivityDetails>(
             this.url.ACTIVITY + activity.activityId
         );
     }

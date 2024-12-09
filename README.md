@@ -281,7 +281,9 @@ Delete an image from activity
 
 ```js
 const [activity] = await GCClient.getActivities(0, 1);
-const activityDetails = await GCClient.getActivityDetails(activity.activityId);
+const activityDetails = await GCClient.getActivity({
+    activityId: activity.activityId
+});
 
 await GCClient.deleteImage(
     activity,
