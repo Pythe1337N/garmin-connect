@@ -39,7 +39,8 @@ import {
     ActivitySubType,
     ActivityType,
     GCActivityId,
-    IActivity
+    IActivity,
+    IActivityUploadDetails
 } from './types/activity';
 
 let config: GCCredentials | undefined = undefined;
@@ -266,16 +267,24 @@ export default class GarminConnect {
         const fileBuffer = fs.createReadStream(file);
         const form = new FormData();
         form.append('userfile', fileBuffer);
-        const response = await this.client.post(
-            this.url.UPLOAD + '.' + format,
-            form,
-            {
-                headers: {
-                    'Content-Type': form.getHeaders()['content-type']
-                }
+        const response = await this.client.post(this.url.UPLOAD(format), form, {
+            headers: {
+                'Content-Type': form.getHeaders()['content-type']
             }
+        });
+        return response as IActivityUploadDetails;
+    }
+
+    async getUploadActivityDetails(
+        uploadCreationDate: string,
+        activityId: string
+    ) {
+        // garmin uses "creationDate" from 'upload activity' response on their path to get the status
+        const creationDate = new Date(uploadCreationDate);
+        const response = await this.client.get(
+            this.url.UPLOAD_ACTIVITY_STATUS(creationDate.getTime(), activityId)
         );
-        return response;
+        return response as IActivityUploadDetails;
     }
 
     async deleteActivity(activity: {

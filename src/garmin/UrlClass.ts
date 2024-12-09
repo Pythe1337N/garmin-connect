@@ -1,4 +1,9 @@
-import { GCGearUuid, GCWorkoutId, GarminDomain } from './types';
+import {
+    GCGearUuid,
+    GCWorkoutId,
+    GarminDomain,
+    UploadFileTypeTypeValue
+} from './types';
 import { GCActivityId } from './types/activity';
 
 export class UrlClass {
@@ -66,8 +71,11 @@ export class UrlClass {
     get DOWNLOAD_KML() {
         return `${this.GC_API}/download-service/export/kml/activity/`;
     }
-    get UPLOAD() {
-        return `${this.GC_API}/upload-service/upload/`;
+    UPLOAD(format: UploadFileTypeTypeValue) {
+        return `${this.GC_API}/upload-service/upload/.${format}`;
+    }
+    UPLOAD_ACTIVITY_STATUS(uploadTime: number, activityId: string) {
+        return `${this.GC_API}/activity-service/activity/status/${uploadTime}/${activityId}`;
     }
     get IMPORT_DATA() {
         return `${this.GC_API}/modern/import-data`;

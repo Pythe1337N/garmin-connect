@@ -1,3 +1,5 @@
+import { GCUserProfileId } from '.';
+
 export type GCActivityId = number;
 
 export enum ActivityType {
@@ -21,6 +23,40 @@ export enum ActivitySubType {
     StreetRunning = 'street_running', // Maps to Running
     TrailRunning = 'trail_running', // Maps to Running
     IndoorRunning = 'indoor_running' // Maps to Running
+}
+
+export interface IActivityUploadDetails {
+    detailedImportResult: {
+        uploadId: number;
+        uploadUuid: { uuid: string };
+        owner: GCUserProfileId;
+        fileSize: number;
+        processingTime: number;
+        creationDate: string;
+        ipAddress: string | null;
+        fileName: string;
+        report: string | null;
+        successes: {
+            internalId: number;
+            externalId: string | null;
+            messages:
+                | {
+                      code: number;
+                      content: string;
+                  }[]
+                | null;
+        }[];
+        failures: {
+            internalId: number;
+            externalId: string | null;
+            messages:
+                | {
+                      code: number;
+                      content: string;
+                  }[]
+                | null;
+        }[];
+    };
 }
 
 export interface IActivity {
