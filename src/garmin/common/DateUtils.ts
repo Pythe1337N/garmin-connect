@@ -24,18 +24,18 @@ export function calculateTimeDifference(
 }
 
 export function getLocalTimestamp(date: Date, timezone: string) {
-    // Get the current local date timestamp in ISO format
-    const localTimestampISO = date.toISOString().substring(0, 23);
-
-    // Convert the ISO timestamp to local timezone while maintaining the same format
-    const localTimestamp = new Date(localTimestampISO).toLocaleString('en-US', {
+    // Format the local date as `YYYY-MM-DD`
+    const formatted_date = date.toLocaleDateString('sv', {
+        timeZone: timezone
+    });
+    // Format the local time as `HH:MM:SS`
+    const formatted_time = date.toLocaleTimeString('sv', {
         timeZone: timezone,
         hour12: false
     });
+    // Format millseconds
+    const formatted_mill_sec = String(date.getMilliseconds()).padStart(3, '0');
 
     // Format the local timestamp as `YYYY-MM-DDTHH:MM:SS.SSS`
-    const formattedLocalTimestamp = new Date(localTimestamp)
-        .toISOString()
-        .substring(0, 23);
-    return formattedLocalTimestamp;
+    return `${formatted_date}T${formatted_time}.${formatted_mill_sec}`;
 }
